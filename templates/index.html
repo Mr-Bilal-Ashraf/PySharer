@@ -1,8 +1,10 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
@@ -24,15 +26,61 @@
         }
 
         .header {
+            margin-bottom: 10px;
+            height: 60px;
+            background-color: #005377;
+            font-size: 15px;
             display: flex;
-            flex-wrap: wrap;
-        }
+            align-items: center;
+            justify-content: space-between;
 
-        .header div {
-            padding: 5px 0;
-            text-align: center;
-            width: 50%;
-            background: #0b5ed7;
+            .left {
+                margin-left: 50px;
+                color: white;
+                border-radius: 3px;
+                padding: 7px 10px;
+                background-color: rgba(0, 0, 0, 0.28) !important;
+                .back_link{
+                text-decoration: none;
+                color: white;
+                }
+            }
+
+            .center {
+                margin: 0px 50px;
+                color: white;
+                width: 325px;
+                height: 20px;
+
+                .url {
+                    border-radius: 3px;
+                    margin-left: 7px;
+                    padding: 7px 10px;
+                    background-color: rgba(0, 0, 0, 0.28) !important;
+                }
+            }
+
+            .right {
+                margin-right: 50px;
+                display: flex;
+
+                .button {
+                    font-size: 15px;
+                    border: none;
+                    transition: .3s ease;
+                    border-radius: 3px;
+                    margin: 5px;
+                    height: 31px !important;
+                    width: 83px;
+                    cursor: pointer;
+                }
+
+                .button:hover {
+                    transition: .3s ease;
+                    color: white;
+                    background-color: teal;
+                }
+            }
         }
 
         .container {
@@ -74,51 +122,70 @@
         }
     </style>
 </head>
+
 <body>
-<div class="header">
+    <!-- <div class="header">
     <div>Live on local network: <a href="http://{{localhost}}:{{port}}">{{localhost}}:{{port}}</a></div>
     <div>abcd</div>
-</div>
-<div class="container">
-    <!-- Start of back to parent directory -->
-    {% if not prev_dir == none %}
-    <div>
-        <a href="/{{ prev_dir }}">
-            <img src="/static/img/parent_dir.png" alt="{{ obj }}">
-        </a>
-        <a href="/{{ prev_dir }}">
-            <b>...</b>
-        </a>
-    </div>
-    {% endif %}
+</div> -->
 
-    <!-- Display all directories on the path -->
-    {% for obj in dirs %}
-    <div title="{{ obj }}">
-        <a href="/{{path}}{{ append_slash }}{{obj}}">
-            <img src="/static/img/dir.png" alt="{{ obj }}">
-        </a>
-        <a href="/{{path}}{{ append_slash }}{{obj}}">
-            {{ obj }}
-        </a>
-    </div>
-    {% endfor %}
 
-    <!-- Display all files on the path -->
-    {% for obj in files %}
-    <div onmouseover="show_file_size('{{obj.name}}', '{{obj.size}}')" onmouseleave="hide_file_size()">
-        <a href="/download/{{path}}/{{obj.name}}/" download>
-            <img src="/static/img/{{obj.type}}.png" alt="{{ obj.name }}">
-        </a>
-        <a href="/download/{{path}}/{{obj.name}}/" download>{{ obj.name }}</a>
-    </div>
-    {% endfor %}
+    <div class="header">
+        {% if not prev_dir == none %}
+        <div class="left">
+            <a class="back_link" href="/{{ prev_dir }}">Back</a>
+        </div>
+        {% endif %}
+        <div class="center">Live on Local Network <something class="url">{{localhost}}:{{port}}</something>
+        </div>
+        <div class="right">
+            <button class="button">Upload</button>
+            <button class="button">Github</button>
+        </div>
 
-</div>
-<div id="file_size_box">
-    <div id="file_name"></div>
-    <div id="file_size"></div>
-</div>
+    </div>
+
+
+    <div class="container">
+        <!-- Start of back to parent directory -->
+        <!-- {% if not prev_dir == none %}
+        <div>
+            <a href="/{{ prev_dir }}">
+                <img src="/static/img/parent_dir.png" alt="{{ obj }}">
+            </a>
+            <a href="/{{ prev_dir }}">
+                <b>...</b>
+            </a>
+        </div>
+        {% endif %} -->
+
+        <!-- Display all directories on the path -->
+        {% for obj in dirs %}
+        <div title="{{ obj }}">
+            <a href="/{{path}}{{ append_slash }}{{obj}}">
+                <img src="/static/img/dir.png" alt="{{ obj }}">
+            </a>
+            <a href="/{{path}}{{ append_slash }}{{obj}}">
+                {{ obj }}
+            </a>
+        </div>
+        {% endfor %}
+
+        <!-- Display all files on the path -->
+        {% for obj in files %}
+        <div onmouseover="show_file_size('{{obj.name}}', '{{obj.size}}')" onmouseleave="hide_file_size()">
+            <a href="/download/{{path}}/{{obj.name}}/" download>
+                <img src="/static/img/{{obj.type}}.png" alt="{{ obj.name }}">
+            </a>
+            <a href="/download/{{path}}/{{obj.name}}/" download>{{ obj.name }}</a>
+        </div>
+        {% endfor %}
+
+    </div>
+    <div id="file_size_box">
+        <div id="file_name"></div>
+        <div id="file_size"></div>
+    </div>
 </body>
 <script>
     function show_file_size(name, size) {
@@ -131,4 +198,5 @@
         document.getElementById("file_size_box").style.display = "none";
     }
 </script>
+
 </html>
