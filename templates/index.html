@@ -27,29 +27,36 @@
 
         .header {
             margin-bottom: 10px;
-            height: 60px;
+            min-height: 60px;
             background-color: #005377;
             font-size: 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+
+            .back_link {
+                text-decoration: none;
+                color: white;
+            }
 
             .left {
+                @media(max-width:775px){
+                    margin-left: 10px;
+                }
                 margin-left: 50px;
                 color: white;
                 border-radius: 3px;
                 padding: 7px 10px;
                 background-color: rgba(0, 0, 0, 0.28) !important;
-                .back_link{
-                text-decoration: none;
-                color: white;
-                }
+
+
             }
 
             .center {
-                margin: 0px 50px;
+                margin: 0px -2px;
                 color: white;
-                width: 325px;
+                min-width: 325px;
                 height: 20px;
 
                 .url {
@@ -61,26 +68,28 @@
             }
 
             .right {
+                min-width: 185px;
                 margin-right: 50px;
                 display: flex;
-
-                .button {
-                    font-size: 15px;
-                    border: none;
-                    transition: .3s ease;
-                    border-radius: 3px;
-                    margin: 5px;
-                    height: 31px !important;
-                    width: 83px;
-                    cursor: pointer;
-                }
-
-                .button:hover {
-                    transition: .3s ease;
-                    color: white;
-                    background-color: teal;
-                }
             }
+        }
+
+        .button {
+            background-color: #d4d4d4;
+            font-size: 15px;
+            border: none;
+            transition: .3s ease;
+            border-radius: 3px;
+            margin: 5px;
+            height: 31px !important;
+            width: 83px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            transition: .3s ease;
+            color: white;
+            background-color: teal;
         }
 
         .container {
@@ -120,26 +129,162 @@
                 width: 100%;
             }
         }
+
+        /* Upload popup styling */
+        #uploadContainer {
+            overflow: hidden;
+            transition: .3s ease;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 100vh;
+            width: 100vw;
+            background: rgba(0, 0, 0, 0.286);
+            backdrop-filter: blur(3px);
+
+            .uploadSection {
+                overflow: hidden;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                /* height: 350px;
+                width: 700px; */
+                min-height: 60%;
+                width: 70%;
+                border-radius: 7px;
+                background: white;
+            }
+        }
+
+        #file-detail {
+            display: none;
+            width: 100%;
+            margin-bottom: 14px;
+        }
+
+        .details {
+            margin: 0% auto;
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            height: 35px;
+            margin-top: 30px;
+        }
+
+        @media(max-width:850px) {
+            .details {
+                flex-direction: column;
+            }
+        }
+
+        label {
+            cursor: pointer;
+        }
+
+        #file-name {
+            display: inline-block;
+            min-width: 150px;
+            max-width: 200px;
+            /* Set your desired maximum width */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /* Display ellipsis (...) when text overflows */
+            white-space: nowrap;
+        }
+
+        .close-button {
+            font-size: 24px;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+
+        @media(max-width:775px) {
+            .header {
+                padding: 10px 0px;
+                justify-content: space-between !important;
+            }
+
+            .header:nth-child(4) {
+                justify-content: center !important;
+            }
+
+            .right {
+                margin: 10px 0px 0px 0px !important;
+                display: flex;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .button {
+                height: 37px !important;
+                width: 48% !important;
+            }
+        }
+
+        .desktop {
+            display: block !important;
+        }
+
+        .phone {
+            display: none !important;
+        }
+
+        @media(max-width:570px) {
+            .left {
+                margin-left: 10px !important;
+            }
+
+            .center {
+                margin: 0px -2px !important;
+            }
+        }
+
+        @media(max-width:501px) {
+
+            .left {
+                text-align: center;
+                margin: 0px 12px !important;
+            }
+
+            .center {
+                min-width: 180px !important;
+                max-width: 180px !important;
+                text-align: center;
+            }
+
+            .desktop {
+                display: none !important;
+            }
+
+            .phone {
+                display: block !important;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <!-- <div class="header">
-    <div>Live on local network: <a href="http://{{localhost}}:{{port}}">{{localhost}}:{{port}}</a></div>
-    <div>abcd</div>
-</div> -->
 
 
-    <div class="header">
+
+    <div class="header" id="header">
         {% if not prev_dir == none %}
-        <div class="left">
-            <a class="back_link" href="/{{ prev_dir }}">Back</a>
-        </div>
+        <a class="back_link" href="/{{ prev_dir }}">
+            <div class="left">
+                Back
+            </div>
+        </a>
         {% endif %}
-        <div class="center">Live on Local Network <something class="url">{{localhost}}:{{port}}</something>
+        <div class="center desktop">Live on Local Network <something class="url">{{localhost}}:{{port}}</something>
+        </div>
+        <div class="center phone">
+            <something class="url">{{localhost}}:{{port}}</something>
         </div>
         <div class="right">
-            <button class="button">Upload</button>
+            <button class="button" onclick="uploadPopup()">Upload</button>
             <button class="button">Github</button>
         </div>
 
@@ -147,17 +292,7 @@
 
 
     <div class="container">
-        <!-- Start of back to parent directory -->
-        <!-- {% if not prev_dir == none %}
-        <div>
-            <a href="/{{ prev_dir }}">
-                <img src="/static/img/parent_dir.png" alt="{{ obj }}">
-            </a>
-            <a href="/{{ prev_dir }}">
-                <b>...</b>
-            </a>
-        </div>
-        {% endif %} -->
+
 
         <!-- Display all directories on the path -->
         {% for obj in dirs %}
@@ -166,7 +301,7 @@
                 <img src="/static/img/dir.png" alt="{{ obj }}">
             </a>
             <a href="/{{path}}{{ append_slash }}{{obj}}">
-                {{ obj }}
+                {{ obj|truncate(20) }}
             </a>
         </div>
         {% endfor %}
@@ -177,7 +312,7 @@
             <a href="/download/{{path}}/{{obj.name}}/" download>
                 <img src="/static/img/{{obj.type}}.png" alt="{{ obj.name }}">
             </a>
-            <a href="/download/{{path}}/{{obj.name}}/" download>{{ obj.name }}</a>
+            <a href="/download/{{path}}/{{obj.name}}/" download>{{ obj.name|truncate(20) }}</a>
         </div>
         {% endfor %}
 
@@ -200,3 +335,205 @@
 </script>
 
 </html>
+<style>
+    #uploadContainer1 {
+        overflow: hidden;
+        transition: .3s ease;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: 0vh;
+        width: 0vw;
+        background: rgba(0, 0, 0, 0.286);
+        backdrop-filter: blur(3px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .innerContainer {
+        position: relative;
+        border-radius: 7px;
+        height: 460px;
+        width: 440px;
+        background-color: white;
+        display: flex;
+        /* justify-content: center; */
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .innerContainer label {
+        margin-top:70px;
+
+    }
+
+    .innerContainer img {
+        width: 150px;
+        height: auto;
+    }
+
+    .file-detail1 {
+        width: 96%;
+    }
+
+    .file-detail1 .option {
+        display: flex;
+        align-items: center;
+        background-color: #0202020d;
+        height: 40px;
+        margin: 10px 0px;
+        width: 100%;
+        border-radius: 4px;
+    }
+
+    .file-detail1 .option p {
+        margin-left: 10px;
+    }
+
+    hr {
+        width: 96%;
+        margin: 10px 0px;
+    }
+
+    .note p {
+        margin: 0% auto;
+        width: 100%;
+    }
+
+    #wrapping-fileAndNote {
+        overflow: hidden;
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .submitButton {
+        background-color: #d4d4d4;
+        font-size: 15px;
+        border: none;
+        transition: .3s ease;
+        border-radius: 3px;
+        margin: 5px;
+        height: 31px !important;
+        width: 83px;
+        cursor: pointer;
+    }
+
+    .submitButton:hover {
+        transition: .3s ease;
+        color: white;
+        background-color: teal;
+    }
+
+    @media(max-width:470px) {
+        .innerContainer {
+            width: 94% !important;
+        }
+
+        .note p {
+            margin: 0% auto;
+            width: 94%;
+        }
+    }
+</style>
+<div id="uploadContainer1">
+    <div class="innerContainer">
+        <button class="close-button" onclick="closePopup()">
+            <span>&times;</span>
+        </button>
+        <label for="file" id="upload-icon">
+            <img src="/static/img/upload.png" alt="upload icon">
+        </label>
+        <form action="#">
+            <input type="file" name="file" id="file" hidden>
+            <button type="submit" id="submit" class="submitButton" style="display: none;">Upload</button>
+        </form>
+        <!-- <img src="./static/img/upload.png" alt=""> -->
+
+        <div id="wrapping-fileAndNote">
+            <div class="file-detail1">
+                <div class="option">
+                    <p>File Name : <b id="file-name">- - - - </b></p>
+                </div>
+                <div class="option">
+                    <p>File size : <b id="file-size">- - - - </b></p>
+                </div>
+                <div class="option">
+                    <p>File Type : <b id="file-type">- - - - </b></p>
+                </div>
+            </div>
+            <hr>
+            <div class="note">
+                <p>
+                    All the uploaded files will be
+                    save in
+                    <b>Downloads</b> Folder
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    let header = document.getElementById('header');
+    console.log(header.childElementCount)
+    
+    let actualBtn = document.getElementById('file');
+    let submitButton = document.getElementById('submit');
+    let fileIcon = document.getElementById('upload-icon');
+    let fileName = document.getElementById('file-name');
+    let fileType = document.getElementById('file-type');
+    let fileSize = document.getElementById('file-size');
+
+    actualBtn.addEventListener('change', function () {
+        submitButton.style.display = 'block'
+        fileIcon.style.transition = '0.3s ease'
+        file = this.files[0].name;
+        fileName.textContent = file;
+        fileTypeIndex = this.files[0].name.lastIndexOf('.')
+        fileType.textContent = file.slice(fileTypeIndex + 1).toUpperCase()
+        fileSize.textContent = handleFileChange()
+    })
+
+    function handleFileChange() {
+        const fileInput = document.getElementById('file');
+        const fileSizeElement = document.getElementById('fileSize');
+
+        if (fileInput.files.length > 0) {
+            const selectedFile = fileInput.files[0];
+            const fileSize = selectedFile.size; // File size in bytes
+
+            // Convert bytes to a more human-readable format
+            const fileSizeFormatted = formatFileSize(fileSize);
+            return fileSizeFormatted;
+        } else {
+            fileSizeElement.textContent = 'No file selected';
+        }
+    }
+
+    function formatFileSize(bytes) {
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes === 0) return '0 Byte';
+        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    }
+
+
+    function uploadPopup() {
+        let container = document.getElementById('uploadContainer1')
+        container.style.height = '100vh'
+        container.style.width = '100vw'
+    }
+    function closePopup() {
+        let container = document.getElementById('uploadContainer1')
+        container.style.height = '0vh'
+        container.style.width = '0vw'
+    }
+</script>
