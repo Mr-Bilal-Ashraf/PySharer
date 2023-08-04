@@ -1,69 +1,74 @@
-var header = document.getElementById("header");
-if (header.childElementCount == 4) {
-  header.style.justifyContent = "space-between !important";
-} else if (header.childElementCount == 3) {
-  if (screen.width < 775) {
-    header.setAttribute("style", "justify-content:center !important;");
-  }
+function _(el) {
+    return document.getElementById(el);
 }
 
-let actualBtn = document.getElementById("file");
-let submitButton = document.getElementById("submit");
-let fileIcon = document.getElementById("upload-icon");
-let fileName = document.getElementById("file-name");
-let fileType = document.getElementById("file-type");
-let fileSize = document.getElementById("file-size");
+var header = _("header");
+if (header.childElementCount == 4) {
+    header.style.justifyContent = "space-between !important";
+} else if (header.childElementCount == 3) {
+    if (screen.width < 775) {
+        header.setAttribute("style", "justify-content:center !important;");
+    }
+}
+
+let actualBtn = _("file");
+let submitButton = _("submit");
+let fileIcon = _("upload-icon");
+let fileName = _("file-name");
+let fileType = _("file-type");
+let fileSize = _("file-size");
 
 actualBtn.addEventListener("change", function () {
-  submitButton.style.display = "block";
-  fileIcon.style.transition = "0.3s ease";
-  file = this.files[0].name;
-  fileName.textContent = file;
-  fileTypeIndex = this.files[0].name.lastIndexOf(".");
-  fileType.textContent = file.slice(fileTypeIndex + 1).toUpperCase();
-  fileSize.textContent = handleFileChange();
+    submitButton.style.display = "block";
+    fileIcon.style.transition = "0.3s ease";
+    file = this.files[0].name;
+    fileName.textContent = file;
+    fileTypeIndex = this.files[0].name.lastIndexOf(".");
+    fileType.textContent = file.slice(fileTypeIndex + 1).toUpperCase();
+    fileSize.textContent = handleFileChange();
 });
 
 function handleFileChange() {
-  const fileInput = document.getElementById("file");
-  const fileSizeElement = document.getElementById("fileSize");
+    const fileInput = _("file");
+    const fileSizeElement = _("fileSize");
 
-  if (fileInput.files.length > 0) {
-    const selectedFile = fileInput.files[0];
-    const fileSize = selectedFile.size; // File size in bytes
+    if (fileInput.files.length > 0) {
+        const selectedFile = fileInput.files[0];
+        const fileSize = selectedFile.size; // File size in bytes
 
-    // Convert bytes to a more human-readable format
-    const fileSizeFormatted = formatFileSize(fileSize);
-    return fileSizeFormatted;
-  } else {
-    fileSizeElement.textContent = "No file selected";
-  }
+        // Convert bytes to a more human-readable format
+        const fileSizeFormatted = formatFileSize(fileSize);
+        return fileSizeFormatted;
+    } else {
+        fileSizeElement.textContent = "No file selected";
+    }
 }
 
 function formatFileSize(bytes) {
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-  if (bytes === 0) return "0 Byte";
-  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-  return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    if (bytes === 0) return "0 Byte";
+    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
 }
 
 function show_uploadPopup() {
-  let container = document.getElementById("uploadContainer1");
-  container.style.height = "100vh";
-  container.style.width = "100vw";
+    let container = _("uploadContainer1");
+    container.style.height = "100vh";
+    container.style.width = "100vw";
 }
+
 function close_uploadPopup() {
-  let container = document.getElementById("uploadContainer1");
-  container.style.height = "0vh";
-  container.style.width = "0vw";
+    let container = _("uploadContainer1");
+    container.style.height = "0vh";
+    container.style.width = "0vw";
 }
 
 function show_file_size(name, size) {
-  document.getElementById("file_size_box").style.display = "flex";
-  document.getElementById("file_name").innerText = name;
-  document.getElementById("file_size").innerText = size;
+    _("file_size_box").style.display = "flex";
+    _("file_name").innerText = name;
+    _("file_size").innerText = size;
 }
 
 function hide_file_size() {
-  document.getElementById("file_size_box").style.display = "none";
+    _("file_size_box").style.display = "none";
 }
