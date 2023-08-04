@@ -26,6 +26,7 @@ actualBtn.addEventListener("change", function () {
     fileTypeIndex = this.files[0].name.lastIndexOf(".");
     fileType.textContent = file.slice(fileTypeIndex + 1).toUpperCase();
     fileSize.textContent = handleFileChange();
+    status.innerHTML = "";
 });
 
 function handleFileChange() {
@@ -61,6 +62,12 @@ function close_uploadPopup() {
     let container = _("uploadContainer1");
     container.style.height = "0vh";
     container.style.width = "0vw";
+    bar.style.display = "none";
+    submitButton.style.display = "none";
+    file_input.value = "";
+    fileName.textContent = "- - - - ";
+    fileType.textContent = "- - - - ";
+    fileSize.textContent = "- - - - ";
 }
 
 function show_file_size(name, size) {
@@ -72,3 +79,48 @@ function show_file_size(name, size) {
 function hide_file_size() {
     _("file_size_box").style.display = "none";
 }
+
+const form = _("uploadForm");
+const file_input = _("file");
+const bar = _("progressBar");
+const status = _("progressStatus");
+
+function listenXmlRequest() {
+    let data = JSON.parse(this.responseText);
+    console.log("Status Code -=> ", this.status);
+    if (data.code == true) {
+        status.innerHTML = "Uploaded Successfully!";
+        setTimeout(function () {
+            location.reload();
+        }, 500);
+    } else {
+        status.innerHTML = data.message;
+        bar.style.display = "none";
+        file_input.value = "";
+        fileName.textContent = "- - - - ";
+        fileType.textContent = "- - - - ";
+        fileSize.textContent = "- - - - ";
+    }
+}
+
+form.addEventListener("submit", e => {
+    e.preventDefault();
+    bar.style.display = "block";
+    submitButton.style.display = "none";
+
+    const file = file_input.files[0];
+    const form_data = new FormData();
+    form_data.append("file", file);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/upload/', true);
+    xhr.upload.onprogress = e => {
+        if (e.lengthComputable) {
+            const percentComplete = Math.round((e.loaded / e.total) * 100);
+            bar.value = percentComplete;
+            status.innerText = `${percentComplete} %`;
+        }
+    };
+    xhr.send(form_data);
+    xhr.addEventListener("load", listenXmlRequest);
+})

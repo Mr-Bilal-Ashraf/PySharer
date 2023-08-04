@@ -281,10 +281,20 @@ hr {
     border: none;
     transition: .3s ease;
     border-radius: 3px;
-    margin: 5px;
+    margin: 5px auto;
     height: 31px !important;
     width: 83px;
     cursor: pointer;
+}
+
+#progressBar{
+    margin: 0 auto;
+    display: none;
+    width:300px;
+}
+
+#progressStatus{
+    text-align: center;
 }
 
 .submitButton:hover {

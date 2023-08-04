@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 from platform import system
 
-from flask import Flask, redirect, render_template, request, send_from_directory
+from flask import Flask, jsonify, render_template, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 from FILE_TYPES import FILE_TYPES
@@ -83,11 +83,22 @@ def download_file(path="", file=""):
 
 @app.route("/upload/", methods=["POST"])
 def upload_file():
-    f = request.files["file"]
-    file_name = secure_filename(f.filename)
-    path = os.path.expanduser("~") + "/Downloads/"
-    f.save(path + file_name)
-    return redirect("/", code=302)
+    try:
+        f = request.files["file"]
+        file_name = secure_filename(f.filename)
+        path = os.path.expanduser("~") + "/Downloads/"
+        f.save(path + file_name)
+        return jsonify(dict(message="success", code=True)), 201
+    except Exception as e:
+        return (
+            jsonify(
+                dict(
+                    message="There comes an error while uploading your file.<br>Please try another file!",
+                    code=False,
+                )
+            ),
+            500,
+        )
 
 
 if __name__ == "__main__":

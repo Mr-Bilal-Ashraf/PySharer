@@ -86,8 +86,10 @@
         <label for="file" id="upload-icon">
             <img src="/static/img/upload.png" alt="upload icon">
         </label>
-        <form action="/upload/" method="post" enctype="multipart/form-data">
+        <form action="/upload/" id="uploadForm" method="post" enctype="multipart/form-data">
             <input type="file" name="file" id="file" hidden>
+            <progress id="progressBar" value="0" max="100"></progress>
+            <div id="progressStatus"></div>
             <button type="submit" id="submit" class="submitButton" style="display: none;">Upload</button>
         </form>
         <!-- <img src="./static/img/upload.png" alt=""> -->
