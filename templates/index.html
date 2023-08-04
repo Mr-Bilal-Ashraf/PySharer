@@ -1,134 +1,113 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename = 'javascript/app.js') }}"></script>
     <title>Document</title>
-    <style>
-        body {
-            background: #f9f9f9;
-            font-family: Helvetica;
-            margin: 0;
-        }
 
-        .container a {
-            text-decoration: none;
-            color: black;
-            word-break: break-all;
-        }
-
-        img {
-            width: 4rem;
-            height: auto;
-        }
-
-        .header {
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .header div {
-            padding: 5px 0;
-            text-align: center;
-            width: 50%;
-            background: #0b5ed7;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .container div {
-            margin: 5px;
-            display: flex;
-            flex-direction: column;
-            max-width: 100px;
-            min-width: 100px;
-            text-align: center;
-        }
-
-        #file_size_box {
-            justify-content: right;
-            border-radius: 5px 0 0 5px;
-            background: #d4d4d4;
-            position: absolute;
-            display: none;
-            z-index: 100;
-            bottom: 0;
-            right: 0;
-        }
-
-        #file_size_box div {
-            margin: 0 5px;
-            padding: 5px;
-        }
-
-        @media (max-width: 500px) {
-
-
-            .header div {
-                width: 100%;
-            }
-        }
-    </style>
 </head>
+
 <body>
-<div class="header">
-    <div>Live on local network: <a href="http://{{localhost}}:{{port}}">{{localhost}}:{{port}}</a></div>
-    <div>abcd</div>
-</div>
-<div class="container">
-    <!-- Start of back to parent directory -->
-    {% if not prev_dir == none %}
-    <div>
-        <a href="/{{ prev_dir }}">
-            <img src="/static/img/parent_dir.png" alt="{{ obj }}">
-        </a>
-        <a href="/{{ prev_dir }}">
-            <b>...</b>
-        </a>
-    </div>
-    {% endif %}
 
-    <!-- Display all directories on the path -->
-    {% for obj in dirs %}
-    <div title="{{ obj }}">
-        <a href="/{{path}}{{ append_slash }}{{obj}}">
-            <img src="/static/img/dir.png" alt="{{ obj }}">
+    <div class="header" id="header">
+        {% if not prev_dir == none %}
+        <!-- <a class="back_link" href="/{{ prev_dir }}">
+            <div class="left">
+                Back
+            </div>
+        </a> -->
+        <a class="back_link" onclick="window.history.back()">
+            <div class="left">
+                Back
+            </div>
         </a>
-        <a href="/{{path}}{{ append_slash }}{{obj}}">
-            {{ obj }}
-        </a>
-    </div>
-    {% endfor %}
+        {% endif %}
+        <div class="center desktop">Live on Local Network <something class="url">{{localhost}}:{{port}}</something>
+        </div>
+        <div class="center phone">
+            <something class="url">{{localhost}}:{{port}}</something>
+        </div>
+        <div class="right">
+            <button class="button" onclick="show_uploadPopup()">Upload</button>
+            <button class="button">Github</button>
+        </div>
 
-    <!-- Display all files on the path -->
-    {% for obj in files %}
-    <div onmouseover="show_file_size('{{obj.name}}', '{{obj.size}}')" onmouseleave="hide_file_size()">
-        <a href="/download/{{path}}/{{obj.name}}/" download>
-            <img src="/static/img/{{obj.type}}.png" alt="{{ obj.name }}">
-        </a>
-        <a href="/download/{{path}}/{{obj.name}}/" download>{{ obj.name }}</a>
     </div>
-    {% endfor %}
 
-</div>
-<div id="file_size_box">
-    <div id="file_name"></div>
-    <div id="file_size"></div>
-</div>
+
+    <div class="container">
+
+
+        <!-- Display all directories on the path -->
+        {% for obj in dirs %}
+        <div class="directories" title="{{ obj }}">
+            <a href="/{{path}}{{ append_slash }}{{obj}}">
+                <img src="/static/img/dir.png" alt="{{ obj }}">
+            </a>
+            <a href="/{{path}}{{ append_slash }}{{obj}}">
+                {{ obj|truncate(20) }}
+            </a>
+        </div>
+        {% endfor %}
+
+        <!-- Display all files on the path -->
+        {% for obj in files %}
+        <div onmouseover="show_file_size('{{obj.name}}', '{{obj.size}}')" onmouseleave="hide_file_size()">
+            <a href="/download/{{path}}/{{obj.name}}/" download>
+                <img src="/static/img/{{obj.type}}.png" alt="{{ obj.name }}">
+            </a>
+            <a href="/download/{{path}}/{{obj.name}}/" download>{{ obj.name|truncate(20) }}</a>
+        </div>
+        {% endfor %}
+
+    </div>
+    <div id="file_size_box">
+        <div id="file_name"></div>
+        <div id="file_size"></div>
+    </div>
 </body>
-<script>
-    function show_file_size(name, size) {
-        document.getElementById("file_size_box").style.display = "flex";
-        document.getElementById("file_name").innerText = name;
-        document.getElementById("file_size").innerText = size;
-    }
 
-    function hide_file_size() {
-        document.getElementById("file_size_box").style.display = "none";
-    }
-</script>
 </html>
+
+<div id="uploadContainer1">
+    <div class="innerContainer">
+        <button class="close-button" onclick="close_uploadPopup()">
+            <span>&times;</span>
+        </button>
+        <label for="file" id="upload-icon">
+            <img src="/static/img/upload.png" alt="upload icon">
+        </label>
+        <form action="/upload/" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" id="file" hidden>
+            <button type="submit" id="submit" class="submitButton" style="display: none;">Upload</button>
+        </form>
+        <!-- <img src="./static/img/upload.png" alt=""> -->
+
+        <div id="wrapping-fileAndNote">
+            <div class="file-detail1">
+                <div class="option">
+                    <p>File Name : <b id="file-name">- - - - </b></p>
+                </div>
+                <div class="option">
+                    <p>File size : <b id="file-size">- - - - </b></p>
+                </div>
+                <div class="option">
+                    <p>File Type : <b id="file-type">- - - - </b></p>
+                </div>
+            </div>
+            <hr>
+            <div class="note">
+                <p>
+                    All the uploaded files will be
+                    save in
+                    <b>Downloads</b> Folder
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

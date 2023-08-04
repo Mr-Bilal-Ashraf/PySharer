@@ -3,8 +3,8 @@ import socket
 
 from pathlib import Path
 
-from flask import Flask, render_template, send_from_directory
-
+from flask import Flask, render_template, request, send_from_directory, redirect
+from werkzeug.utils import secure_filename
 from FILE_TYPES import FILE_TYPES
 
 app = Flask(__name__)
@@ -26,7 +26,8 @@ def determine_file_types(files, path):
         data.append(
             dict(
                 name=file,
-                type=FILE_TYPES.get(file[file.rfind(".") + 1 :].lower(), "unknown"),
+                type=FILE_TYPES.get(
+                    file[file.rfind(".") + 1:].lower(), "unknown"),
                 size=size,
             )
         )
@@ -55,7 +56,8 @@ def main(path=""):
     data["files"].sort()
     data["files"] = determine_file_types(data["files"], selected_path)
     data["prev_dir"] = (
-        str(Path(f"/{path}").parent.absolute()).replace("/", "-")[1:] if path else None
+        str(Path(f"/{path}").parent.absolute()
+            ).replace("/", "-")[1:] if path else None
     )
     data["full_path"] = selected_path
     data["append_slash"] = "-" if path else ""
@@ -70,6 +72,15 @@ def download_file(path="", file=""):
     path = path.replace("-", "/")
     path = os.path.expanduser("~") + f"/{path}/"
     return send_from_directory(path, file, as_attachment=True)
+
+
+@app.route("/upload/", methods=["POST"])
+def upload_file():
+    f = request.files["file"]
+    file_name = secure_filename(f.filename)
+    path = os.path.expanduser("~") + "/Downloads/"
+    f.save(path + file_name)
+    return redirect("/", code=302)
 
 
 if __name__ == "__main__":
