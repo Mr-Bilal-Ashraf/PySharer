@@ -6,273 +6,22 @@
     <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename = 'javascript/app.js') }}"></script>
     <title>Document</title>
-    <style>
-        body {
-            background: #f9f9f9;
-            font-family: Helvetica;
-            margin: 0;
-        }
 
-        .container a {
-            text-decoration: none;
-            color: black;
-            word-break: break-all;
-        }
-
-        img {
-            width: 4rem;
-            height: auto;
-        }
-
-        .header {
-            margin-bottom: 10px;
-            min-height: 60px;
-            background-color: #005377;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-
-            .back_link {
-                text-decoration: none;
-                color: white;
-            }
-
-            .left {
-                @media(max-width:775px){
-                    margin-left: 10px;
-                }
-                margin-left: 50px;
-                color: white;
-                border-radius: 3px;
-                padding: 7px 10px;
-                background-color: rgba(0, 0, 0, 0.28) !important;
-
-
-            }
-
-            .center {
-                margin: 0px -2px;
-                color: white;
-                min-width: 325px;
-                height: 20px;
-
-                .url {
-                    border-radius: 3px;
-                    margin-left: 7px;
-                    padding: 7px 10px;
-                    background-color: rgba(0, 0, 0, 0.28) !important;
-                }
-            }
-
-            .right {
-                min-width: 185px;
-                margin-right: 50px;
-                display: flex;
-            }
-        }
-
-        .button {
-            background-color: #d4d4d4;
-            font-size: 15px;
-            border: none;
-            transition: .3s ease;
-            border-radius: 3px;
-            margin: 5px;
-            height: 31px !important;
-            width: 83px;
-            cursor: pointer;
-        }
-
-        .button:hover {
-            transition: .3s ease;
-            color: white;
-            background-color: teal;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .container div {
-            margin: 5px;
-            display: flex;
-            flex-direction: column;
-            max-width: 100px;
-            min-width: 100px;
-            text-align: center;
-        }
-
-        #file_size_box {
-            justify-content: right;
-            border-radius: 5px 0 0 5px;
-            background: #d4d4d4;
-            position: absolute;
-            display: none;
-            z-index: 100;
-            bottom: 0;
-            right: 0;
-        }
-
-        #file_size_box div {
-            margin: 0 5px;
-            padding: 5px;
-        }
-
-        @media (max-width: 500px) {
-
-
-            .header div {
-                width: 100%;
-            }
-        }
-
-        /* Upload popup styling */
-        #uploadContainer {
-            overflow: hidden;
-            transition: .3s ease;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            height: 100vh;
-            width: 100vw;
-            background: rgba(0, 0, 0, 0.286);
-            backdrop-filter: blur(3px);
-
-            .uploadSection {
-                overflow: hidden;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                /* height: 350px;
-                width: 700px; */
-                min-height: 60%;
-                width: 70%;
-                border-radius: 7px;
-                background: white;
-            }
-        }
-
-        #file-detail {
-            display: none;
-            width: 100%;
-            margin-bottom: 14px;
-        }
-
-        .details {
-            margin: 0% auto;
-            display: flex;
-            justify-content: space-between;
-            width: 90%;
-            height: 35px;
-            margin-top: 30px;
-        }
-
-        @media(max-width:850px) {
-            .details {
-                flex-direction: column;
-            }
-        }
-
-        label {
-            cursor: pointer;
-        }
-
-        #file-name {
-            display: inline-block;
-            min-width: 150px;
-            max-width: 200px;
-            /* Set your desired maximum width */
-            overflow: hidden;
-            text-overflow: ellipsis;
-            /* Display ellipsis (...) when text overflows */
-            white-space: nowrap;
-        }
-
-        .close-button {
-            font-size: 24px;
-            position: absolute;
-            right: 15px;
-            top: 15px;
-        }
-
-        @media(max-width:775px) {
-            .header {
-                padding: 10px 0px;
-                justify-content: space-between !important;
-            }
-
-            .header:nth-child(4) {
-                justify-content: center !important;
-            }
-
-            .right {
-                margin: 10px 0px 0px 0px !important;
-                display: flex;
-                justify-content: center;
-                width: 100%;
-            }
-
-            .button {
-                height: 37px !important;
-                width: 48% !important;
-            }
-        }
-
-        .desktop {
-            display: block !important;
-        }
-
-        .phone {
-            display: none !important;
-        }
-
-        @media(max-width:570px) {
-            .left {
-                margin-left: 10px !important;
-            }
-
-            .center {
-                margin: 0px -2px !important;
-            }
-        }
-
-        @media(max-width:501px) {
-
-            .left {
-                text-align: center;
-                margin: 0px 12px !important;
-            }
-
-            .center {
-                min-width: 180px !important;
-                max-width: 180px !important;
-                text-align: center;
-            }
-
-            .desktop {
-                display: none !important;
-            }
-
-            .phone {
-                display: block !important;
-            }
-        }
-    </style>
 </head>
 
 <body>
 
-
-
     <div class="header" id="header">
         {% if not prev_dir == none %}
-        <a class="back_link" href="/{{ prev_dir }}">
+        <!-- <a class="back_link" href="/{{ prev_dir }}">
+            <div class="left">
+                Back
+            </div>
+        </a> -->
+        <a class="back_link" onclick="window.history.back()">
             <div class="left">
                 Back
             </div>
@@ -284,7 +33,7 @@
             <something class="url">{{localhost}}:{{port}}</something>
         </div>
         <div class="right">
-            <button class="button" onclick="uploadPopup()">Upload</button>
+            <button class="button" onclick="show_uploadPopup()">Upload</button>
             <button class="button">Github</button>
         </div>
 
@@ -296,7 +45,7 @@
 
         <!-- Display all directories on the path -->
         {% for obj in dirs %}
-        <div title="{{ obj }}">
+        <div class="directories" title="{{ obj }}">
             <a href="/{{path}}{{ append_slash }}{{obj}}">
                 <img src="/static/img/dir.png" alt="{{ obj }}">
             </a>
@@ -322,134 +71,18 @@
         <div id="file_size"></div>
     </div>
 </body>
-<script>
-    function show_file_size(name, size) {
-        document.getElementById("file_size_box").style.display = "flex";
-        document.getElementById("file_name").innerText = name;
-        document.getElementById("file_size").innerText = size;
-    }
-
-    function hide_file_size() {
-        document.getElementById("file_size_box").style.display = "none";
-    }
-</script>
 
 </html>
-<style>
-    #uploadContainer1 {
-        overflow: hidden;
-        transition: .3s ease;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        height: 0vh;
-        width: 0vw;
-        background: rgba(0, 0, 0, 0.286);
-        backdrop-filter: blur(3px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
 
-    .innerContainer {
-        position: relative;
-        border-radius: 7px;
-        height: 460px;
-        width: 440px;
-        background-color: white;
-        display: flex;
-        /* justify-content: center; */
-        align-items: center;
-        flex-direction: column;
-    }
-
-    .innerContainer label {
-        margin-top:70px;
-
-    }
-
-    .innerContainer img {
-        width: 150px;
-        height: auto;
-    }
-
-    .file-detail1 {
-        width: 96%;
-    }
-
-    .file-detail1 .option {
-        display: flex;
-        align-items: center;
-        background-color: #0202020d;
-        height: 40px;
-        margin: 10px 0px;
-        width: 100%;
-        border-radius: 4px;
-    }
-
-    .file-detail1 .option p {
-        margin-left: 10px;
-    }
-
-    hr {
-        width: 96%;
-        margin: 10px 0px;
-    }
-
-    .note p {
-        margin: 0% auto;
-        width: 100%;
-    }
-
-    #wrapping-fileAndNote {
-        overflow: hidden;
-        position: absolute;
-        bottom: 20px;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-    }
-
-    .submitButton {
-        background-color: #d4d4d4;
-        font-size: 15px;
-        border: none;
-        transition: .3s ease;
-        border-radius: 3px;
-        margin: 5px;
-        height: 31px !important;
-        width: 83px;
-        cursor: pointer;
-    }
-
-    .submitButton:hover {
-        transition: .3s ease;
-        color: white;
-        background-color: teal;
-    }
-
-    @media(max-width:470px) {
-        .innerContainer {
-            width: 94% !important;
-        }
-
-        .note p {
-            margin: 0% auto;
-            width: 94%;
-        }
-    }
-</style>
 <div id="uploadContainer1">
     <div class="innerContainer">
-        <button class="close-button" onclick="closePopup()">
+        <button class="close-button" onclick="close_uploadPopup()">
             <span>&times;</span>
         </button>
         <label for="file" id="upload-icon">
             <img src="/static/img/upload.png" alt="upload icon">
         </label>
-        <form action="#">
+        <form action="/upload/" method="post" enctype="multipart/form-data">
             <input type="file" name="file" id="file" hidden>
             <button type="submit" id="submit" class="submitButton" style="display: none;">Upload</button>
         </form>
@@ -478,62 +111,3 @@
         </div>
     </div>
 </div>
-
-
-
-<script>
-    let header = document.getElementById('header');
-    console.log(header.childElementCount)
-    
-    let actualBtn = document.getElementById('file');
-    let submitButton = document.getElementById('submit');
-    let fileIcon = document.getElementById('upload-icon');
-    let fileName = document.getElementById('file-name');
-    let fileType = document.getElementById('file-type');
-    let fileSize = document.getElementById('file-size');
-
-    actualBtn.addEventListener('change', function () {
-        submitButton.style.display = 'block'
-        fileIcon.style.transition = '0.3s ease'
-        file = this.files[0].name;
-        fileName.textContent = file;
-        fileTypeIndex = this.files[0].name.lastIndexOf('.')
-        fileType.textContent = file.slice(fileTypeIndex + 1).toUpperCase()
-        fileSize.textContent = handleFileChange()
-    })
-
-    function handleFileChange() {
-        const fileInput = document.getElementById('file');
-        const fileSizeElement = document.getElementById('fileSize');
-
-        if (fileInput.files.length > 0) {
-            const selectedFile = fileInput.files[0];
-            const fileSize = selectedFile.size; // File size in bytes
-
-            // Convert bytes to a more human-readable format
-            const fileSizeFormatted = formatFileSize(fileSize);
-            return fileSizeFormatted;
-        } else {
-            fileSizeElement.textContent = 'No file selected';
-        }
-    }
-
-    function formatFileSize(bytes) {
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-        if (bytes === 0) return '0 Byte';
-        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-    }
-
-
-    function uploadPopup() {
-        let container = document.getElementById('uploadContainer1')
-        container.style.height = '100vh'
-        container.style.width = '100vw'
-    }
-    function closePopup() {
-        let container = document.getElementById('uploadContainer1')
-        container.style.height = '0vh'
-        container.style.width = '0vw'
-    }
-</script>
