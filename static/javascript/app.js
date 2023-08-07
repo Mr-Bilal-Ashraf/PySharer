@@ -13,13 +13,16 @@ if (header.childElementCount == 4) {
 
 let actualBtn = _("file");
 let submitButton = _("submit");
+let cancelButton = _("cancel");
 let fileIcon = _("upload-icon");
 let fileName = _("file-name");
 let fileType = _("file-type");
 let fileSize = _("file-size");
+let xhr = "";
 
 actualBtn.addEventListener("change", function () {
     submitButton.style.display = "block";
+    cancelButton.style.display = "none";
     fileIcon.style.transition = "0.3s ease";
     file = this.files[0].name;
     fileName.textContent = file;
@@ -64,10 +67,14 @@ function close_uploadPopup() {
     container.style.width = "0vw";
     bar.style.display = "none";
     submitButton.style.display = "none";
+    cancelButton.style.display = "none";
     file_input.value = "";
     fileName.textContent = "- - - - ";
     fileType.textContent = "- - - - ";
     fileSize.textContent = "- - - - ";
+    if (typeof (xhr) == "object") {
+        xhr.abort();
+    }
 }
 
 function show_file_size(name, size) {
@@ -95,6 +102,7 @@ function listenXmlRequest() {
         }, 500);
     } else {
         status.innerHTML = data.message;
+        actualBtn.disabled = false;
         bar.style.display = "none";
         file_input.value = "";
         fileName.textContent = "- - - - ";
@@ -107,12 +115,14 @@ form.addEventListener("submit", e => {
     e.preventDefault();
     bar.style.display = "block";
     submitButton.style.display = "none";
+    cancelButton.style.display = "block";
+    actualBtn.disabled = true;
 
     const file = file_input.files[0];
     const form_data = new FormData();
     form_data.append("file", file);
 
-    const xhr = new XMLHttpRequest();
+    xhr = new XMLHttpRequest();
     xhr.open('POST', '/upload/', true);
     xhr.upload.onprogress = e => {
         if (e.lengthComputable) {
@@ -123,4 +133,16 @@ form.addEventListener("submit", e => {
     };
     xhr.send(form_data);
     xhr.addEventListener("load", listenXmlRequest);
+})
+
+cancelButton.addEventListener("click", e => {
+    xhr.abort();
+    bar.style.display = "none";
+    status.innerText = "Upload canceled";
+    cancelButton.style.display = "none";
+    actualBtn.disabled = false;
+    file_input.value = "";
+    fileName.textContent = "- - - - ";
+    fileType.textContent = "- - - - ";
+    fileSize.textContent = "- - - - ";
 })

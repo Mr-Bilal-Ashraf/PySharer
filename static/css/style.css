@@ -206,7 +206,7 @@ img {
 .innerContainer {
     position: relative;
     border-radius: 7px;
-    height: 460px;
+    height: 480px;
     width: 440px;
     background-color: white;
     display: flex;
