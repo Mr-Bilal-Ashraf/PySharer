@@ -68,6 +68,7 @@ def main(path=""):
     return render_template("index.html", **data)
 
 
+@app.route("/download/<file>/")
 @app.route("/download/<path>/<file>/")
 def download_file(path="", file=""):
     drive = request.args.get("drive", "")
