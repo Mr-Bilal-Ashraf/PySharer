@@ -21,13 +21,30 @@ OS_SYSTEM = system().lower()
 def get_file_size(file):
     sizes = ["Bytes", "KB", "MB", "GB", "TB"]
     size = os.path.getsize(file)
-    size = round(size / 1024)
-    return f"{size:.1f} kb"
     if size == 0:
         return "0 Byte"
     i = int(math.floor(math.log(size) / math.log(1024)))
     return str(round(size / math.pow(1024, i), 2)) + " " + sizes[i]
 
+
+def get_files(path):
+    data = dict()
+    data["dirs"] = list()
+    data["files"] = list()
+    list_dot_files = "" if dot_files else " and not f.startswith('.')"
+    files = os.listdir(path)
+
+    for f in files:
+        if eval(f"os.path.isdir(path+f){list_dot_files}"):
+            data["dirs"].append(f)
+
+    for f in files:
+        if eval(f"os.path.isfile(path+f){list_dot_files}"):
+            data["files"].append(f)
+
+    data["dirs"].sort()
+    data["files"].sort()
+    return data
 
 
 def determine_file_types(files, path):
