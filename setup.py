@@ -1,7 +1,8 @@
+import math
 import os
+import re
 import socket
 from argparse import ArgumentParser
-from pathlib import Path
 from platform import system
 
 from flask import Flask, jsonify, render_template, request, send_from_directory
@@ -14,13 +15,19 @@ app.debug = True
 
 port = 5000
 dot_files = False
-OS_SYSTEM = system()
+OS_SYSTEM = system().lower()
 
 
 def get_file_size(file):
+    sizes = ["Bytes", "KB", "MB", "GB", "TB"]
     size = os.path.getsize(file)
     size = round(size / 1024)
     return f"{size:.1f} kb"
+    if size == 0:
+        return "0 Byte"
+    i = int(math.floor(math.log(size) / math.log(1024)))
+    return str(round(size / math.pow(1024, i), 2)) + " " + sizes[i]
+
 
 
 def determine_file_types(files, path):
