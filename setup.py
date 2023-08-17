@@ -60,6 +60,28 @@ def get_windows_data(path, drive):
     return data
 
 
+def get_linux_data(path, drive):
+    data = dict()
+    data["path"] = path
+    path = path.replace("~", "/")
+    if not path:
+        selected_path = f"{os.path.expanduser('~')}{os.sep}"
+    else:
+        selected_path = f"{os.path.expanduser('~')}{os.sep}{path}{os.sep}"
+
+    data.update(get_files(selected_path))
+    data["files"] = determine_file_types(data["files"], selected_path)
+    data["full_path"] = selected_path
+
+    data["prev_dir"] = True if path else False
+    data["full_path"] = selected_path
+    data["append_slash"] = "~" if path else ""
+    data["localhost"] = socket.gethostbyname(socket.gethostname())
+    data["port"] = port
+
+    return data
+
+
 @app.route("/")
 @app.route("/<path>/")
 def main(path=""):
