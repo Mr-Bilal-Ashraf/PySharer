@@ -76,8 +76,12 @@ def main(path=""):
 
 @app.route("/download/<path>/<file>/")
 def download_file(path="", file=""):
-    path = path.replace("~", "/")
-    path = os.path.expanduser("~") + f"/{path}/"
+    drive = request.args.get("drive", "")
+    path = path.replace("~", os.sep)
+    if OS_SYSTEM == "windows":
+        path = f"{drive}:{os.sep}{path}{os.sep}"
+    elif OS_SYSTEM == "linux":
+        path = f"{os.path.expanduser('~')}{os.sep}{path}{os.sep}"
     return send_from_directory(path, file, as_attachment=True)
 
 
@@ -86,7 +90,7 @@ def upload_file():
     try:
         f = request.files["file"]
         file_name = secure_filename(f.filename)
-        path = os.path.expanduser("~") + "/Downloads/"
+        path = f"{os.path.expanduser('~')}{os.sep}Downloads{os.sep}"
         f.save(path + file_name)
         return jsonify(dict(message="success", code=True)), 201
     except Exception as e:
