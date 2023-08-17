@@ -37,40 +37,34 @@ def determine_file_types(files, path):
     return data
 
 
-@app.route("/")
-@app.route("/<path>/")
-def main(path=""):
+def get_windows_data(path, drive):
     data = dict()
     data["path"] = path
-    path = path.replace("~", "/")
-    if not path:
-        selected_path = f"{os.path.expanduser('~')}/"
+    if path or drive:
+        path = path.replace("~", os.sep)
+        selected_path = f"{drive}:{os.sep}{path}{os.sep}"
+
+        data.update(get_files(selected_path))
+        data["files"] = determine_file_types(data["files"], selected_path)
+        data["full_path"] = selected_path
     else:
-        selected_path = os.path.expanduser("~") + f"/{path}/"
+        drives = os.popen("wmic logicaldisk get name").read()
+        drives = re.findall(r"([^\s]*:)", drives)
+        data["drives"] = list(map(lambda x: x[:-1], drives))
 
-    files = os.listdir(selected_path)
-
-    list_dot_files = "" if dot_files else " and not f.startswith('.')"
-    find_dir = (
-        f"[f for f in files if os.path.isdir('{selected_path}' + f){list_dot_files}]"
-    )
-    find_files = (
-        f"[f for f in files if os.path.isfile('{selected_path}' + f){list_dot_files}]"
-    )
-
-    data["dirs"] = eval(find_dir)
-    data["files"] = eval(find_files)
-    data["dirs"].sort()
-    data["files"].sort()
-    data["files"] = determine_file_types(data["files"], selected_path)
-    data["prev_dir"] = (
-        str(Path(f"/{path}").parent.absolute()).replace("/", "~")[1:] if path else None
-    )
-    data["full_path"] = selected_path
+    data["prev_dir"] = True if path or drive else False
     data["append_slash"] = "~" if path else ""
     data["localhost"] = socket.gethostbyname(socket.gethostname())
     data["port"] = port
+    data["drive"] = drive
+    return data
 
+
+@app.route("/")
+@app.route("/<path>/")
+def main(path=""):
+    drive = request.args.get("drive", "")
+    data = eval(f"get_{OS_SYSTEM}_data")(path, drive)
     return render_template("index.html", **data)
 
 
