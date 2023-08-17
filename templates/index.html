@@ -6,7 +6,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" href="/static/img/short_logo.png"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -16,62 +16,70 @@
 
 <body>
 
-    <div class="header" id="header">
-        {% if not prev_dir == none %}
-        <!-- <a class="back_link" href="/{{ prev_dir }}">
-            <div class="left">
-                Back
-            </div>
-        </a> -->
+<div class="header" id="header">
+    {% if prev_dir %}
         <a class="back_link" onclick="window.history.back()">
             <div class="left">
                 Back
             </div>
         </a>
-        {% endif %}
-        <div class="center desktop">Live on Local Network <something class="url">{{localhost}}:{{port}}</something>
-        </div>
-        <div class="center phone">
-            <something class="url">{{localhost}}:{{port}}</something>
-        </div>
-        <div class="right">
-            <button class="button" onclick="show_uploadPopup()">Upload</button>
-            <button class="button" onclick="window.open('https://github.com/Mr-Bilal-Ashraf/PySharer', '_blank')">
-                Github
-            </button>
-        </div>
-
+    {% endif %}
+    <div class="center desktop">Live on Local Network
+        <something class="url">{{ localhost }}:{{ port }}</something>
+    </div>
+    <div class="center phone">
+        <something class="url">{{ localhost }}:{{ port }}</something>
+    </div>
+    <div class="right">
+        <button class="button" onclick="show_uploadPopup()">Upload</button>
+        <button class="button" onclick="window.open('https://github.com/Mr-Bilal-Ashraf/PySharer', '_blank')">
+            Github
+        </button>
     </div>
 
+</div>
 
-    <div class="container">
-        <!-- Display all directories on the path -->
-        {% for obj in dirs %}
+
+<div class="container">
+    <!-- Display all drives on the path -->
+    {% for obj in drives %}
         <div class="directories" title="{{ obj }}">
-            <a href="/{{path}}{{ append_slash }}{{obj}}">
-                <img src="/static/img/dir.png" alt="{{ obj }}">
+            <a href="/?drive={{ obj }}">
+                <img src="/static/img/drive.png" alt="{{ obj }}">
             </a>
-            <a href="/{{path}}{{ append_slash }}{{obj}}">
+            <a href="/?drive={{ obj }}">
                 {{ obj|truncate(20) }}
             </a>
         </div>
-        {% endfor %}
+    {% endfor %}
 
-        <!-- Display all files on the path -->
-        {% for obj in files %}
-        <div onmouseover="show_file_size('{{obj.name}}', '{{obj.size}}')" onmouseleave="hide_file_size()">
-            <a href="/download/{{path}}/{{obj.name}}/" download>
-                <img src="/static/img/{{obj.type}}.png" alt="{{ obj.name }}">
+    <!-- Display all directories on the path -->
+    {% for obj in dirs %}
+        <div class="directories" title="{{ obj }}">
+            <a href="/{{ path }}{{ append_slash }}{{ obj }}?drive={{ drive }}">
+                <img src="/static/img/dir.png" alt="{{ obj }}">
             </a>
-            <a href="/download/{{path}}/{{obj.name}}/" download>{{ obj.name|truncate(20) }}</a>
+            <a href="/{{ path }}{{ append_slash }}{{ obj }}?drive={{ drive }}">
+                {{ obj|truncate(20) }}
+            </a>
         </div>
-        {% endfor %}
+    {% endfor %}
 
-    </div>
-    <div id="file_size_box">
-        <div id="file_name"></div>
-        <div id="file_size"></div>
-    </div>
+    <!-- Display all files on the path -->
+    {% for obj in files %}
+        <div onmouseover="show_file_size('{{ obj.name }}', '{{ obj.size }}')" onmouseleave="hide_file_size()">
+            <a href="/download/{{ path }}/{{ obj.name }}/?drive={{ drive }}" download>
+                <img src="/static/img/{{ obj.type }}.png" alt="{{ obj.name }}">
+            </a>
+            <a href="/download/{{ path }}/{{ obj.name }}/?drive={{ drive }}" download>{{ obj.name|truncate(20) }}</a>
+        </div>
+    {% endfor %}
+
+</div>
+<div id="file_size_box">
+    <div id="file_name"></div>
+    <div id="file_size"></div>
+</div>
 </body>
 
 <script defer src="{{ url_for('static', filename = 'javascript/app.js') }}"></script>
