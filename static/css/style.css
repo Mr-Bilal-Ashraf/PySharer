@@ -40,8 +40,10 @@ img {
         border-radius: 3px;
         padding: 7px 10px;
         background-color: rgba(0, 0, 0, 0.28) !important;
+    }
 
-
+    .left:hover {
+        cursor: pointer;
     }
 
     .center {
@@ -231,10 +233,18 @@ img {
 }
 
 @keyframes shake {
-    0% { transform: translate(0px, 0px); }
-    25% { transform: translate(0px, -10px); }
-    75% { transform: translate(0px, 10px); }
-    100% { transform: translate(0px, 0px); }
+    0% {
+        transform: translate(0px, 0px);
+    }
+    25% {
+        transform: translate(0px, -10px);
+    }
+    75% {
+        transform: translate(0px, 10px);
+    }
+    100% {
+        transform: translate(0px, 0px);
+    }
 }
 
 .file-detail1 {
@@ -287,13 +297,13 @@ hr {
     cursor: pointer;
 }
 
-#progressBar{
+#progressBar {
     margin: 0 auto;
     display: none;
-    width:300px;
+    width: 300px;
 }
 
-#progressStatus{
+#progressStatus {
     text-align: center;
 }
 
