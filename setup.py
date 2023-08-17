@@ -1,7 +1,8 @@
+import math
 import os
+import re
 import socket
 from argparse import ArgumentParser
-from pathlib import Path
 from platform import system
 
 from flask import Flask, jsonify, render_template, request, send_from_directory
@@ -14,13 +15,36 @@ app.debug = True
 
 port = 5000
 dot_files = False
-OS_SYSTEM = system()
+OS_SYSTEM = system().lower()
 
 
 def get_file_size(file):
+    sizes = ["Bytes", "KB", "MB", "GB", "TB"]
     size = os.path.getsize(file)
-    size = round(size / 1024)
-    return f"{size:.1f} kb"
+    if size == 0:
+        return "0 Byte"
+    i = int(math.floor(math.log(size) / math.log(1024)))
+    return str(round(size / math.pow(1024, i), 2)) + " " + sizes[i]
+
+
+def get_files(path):
+    data = dict()
+    data["dirs"] = list()
+    data["files"] = list()
+    list_dot_files = "" if dot_files else " and not f.startswith('.')"
+    files = os.listdir(path)
+
+    for f in files:
+        if eval(f"os.path.isdir(path+f){list_dot_files}"):
+            data["dirs"].append(f)
+
+    for f in files:
+        if eval(f"os.path.isfile(path+f){list_dot_files}"):
+            data["files"].append(f)
+
+    data["dirs"].sort()
+    data["files"].sort()
+    return data
 
 
 def determine_file_types(files, path):
@@ -37,47 +61,68 @@ def determine_file_types(files, path):
     return data
 
 
-@app.route("/")
-@app.route("/<path>/")
-def main(path=""):
+def get_windows_data(path, drive):
+    data = dict()
+    data["path"] = path
+    if path or drive:
+        path = path.replace("~", os.sep)
+        selected_path = f"{drive}:{os.sep}{path}{os.sep}"
+
+        data.update(get_files(selected_path))
+        data["files"] = determine_file_types(data["files"], selected_path)
+        data["full_path"] = selected_path
+    else:
+        drives = os.popen("wmic logicaldisk get name").read()
+        drives = re.findall(r"([^\s]*:)", drives)
+        data["drives"] = list(map(lambda x: x[:-1], drives))
+
+    data["prev_dir"] = True if path or drive else False
+    data["append_slash"] = "~" if path else ""
+    data["localhost"] = socket.gethostbyname(socket.gethostname())
+    data["port"] = port
+    data["drive"] = drive
+    return data
+
+
+def get_linux_data(path, drive):
     data = dict()
     data["path"] = path
     path = path.replace("~", "/")
     if not path:
-        selected_path = f"{os.path.expanduser('~')}/"
+        selected_path = f"{os.path.expanduser('~')}{os.sep}"
     else:
-        selected_path = os.path.expanduser("~") + f"/{path}/"
+        selected_path = f"{os.path.expanduser('~')}{os.sep}{path}{os.sep}"
 
-    files = os.listdir(selected_path)
-
-    list_dot_files = "" if dot_files else " and not f.startswith('.')"
-    find_dir = (
-        f"[f for f in files if os.path.isdir('{selected_path}' + f){list_dot_files}]"
-    )
-    find_files = (
-        f"[f for f in files if os.path.isfile('{selected_path}' + f){list_dot_files}]"
-    )
-
-    data["dirs"] = eval(find_dir)
-    data["files"] = eval(find_files)
-    data["dirs"].sort()
-    data["files"].sort()
+    data.update(get_files(selected_path))
     data["files"] = determine_file_types(data["files"], selected_path)
-    data["prev_dir"] = (
-        str(Path(f"/{path}").parent.absolute()).replace("/", "~")[1:] if path else None
-    )
+    data["full_path"] = selected_path
+
+    data["prev_dir"] = True if path else False
     data["full_path"] = selected_path
     data["append_slash"] = "~" if path else ""
     data["localhost"] = socket.gethostbyname(socket.gethostname())
     data["port"] = port
 
+    return data
+
+
+@app.route("/")
+@app.route("/<path>/")
+def main(path=""):
+    drive = request.args.get("drive", "")
+    data = eval(f"get_{OS_SYSTEM}_data")(path, drive)
     return render_template("index.html", **data)
 
 
+@app.route("/download/<file>/")
 @app.route("/download/<path>/<file>/")
 def download_file(path="", file=""):
-    path = path.replace("~", "/")
-    path = os.path.expanduser("~") + f"/{path}/"
+    drive = request.args.get("drive", "")
+    path = path.replace("~", os.sep)
+    if OS_SYSTEM == "windows":
+        path = f"{drive}:{os.sep}{path}{os.sep}"
+    elif OS_SYSTEM == "linux":
+        path = f"{os.path.expanduser('~')}{os.sep}{path}{os.sep}"
     return send_from_directory(path, file, as_attachment=True)
 
 
@@ -86,7 +131,7 @@ def upload_file():
     try:
         f = request.files["file"]
         file_name = secure_filename(f.filename)
-        path = os.path.expanduser("~") + "/Downloads/"
+        path = f"{os.path.expanduser('~')}{os.sep}Downloads{os.sep}"
         f.save(path + file_name)
         return jsonify(dict(message="success", code=True)), 201
     except Exception as e:
