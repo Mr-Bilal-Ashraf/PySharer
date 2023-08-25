@@ -106,6 +106,10 @@ def get_linux_data(path, drive):
     return data
 
 
+def get_darwin_data(path, drive):
+    return get_linux_data(path, drive)
+
+
 @app.route("/")
 @app.route("/<path>/")
 def main(path=""):
