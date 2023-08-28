@@ -13,7 +13,7 @@ from FILE_TYPES import FILE_TYPES
 app = Flask(__name__)
 app.debug = True
 
-port = 5000
+port = 80
 dot_files = False
 OS_SYSTEM = system().lower()
 
