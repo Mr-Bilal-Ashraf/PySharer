@@ -13,7 +13,7 @@ from FILE_TYPES import FILE_TYPES
 app = Flask(__name__)
 app.debug = True
 
-port = 5000
+port = 80
 dot_files = False
 OS_SYSTEM = system().lower()
 
@@ -61,6 +61,21 @@ def determine_file_types(files, path):
     return data
 
 
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    try:
+        # use network to detect perfect IPV4 address
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+    except Exception as e:
+        # sometimes return localhost instead of IPV4 address
+        ip = socket.gethostbyname(socket.gethostname())
+    finally:
+        s.close()
+    return ip
+
+
 def get_windows_data(path, drive):
     data = dict()
     data["path"] = path
@@ -78,7 +93,7 @@ def get_windows_data(path, drive):
 
     data["prev_dir"] = True if path or drive else False
     data["append_slash"] = "~" if path else ""
-    data["localhost"] = socket.gethostbyname(socket.gethostname())
+    data["localhost"] = get_ip_address()
     data["port"] = port
     data["drive"] = drive
     return data
@@ -100,7 +115,7 @@ def get_linux_data(path, drive):
     data["prev_dir"] = True if path else False
     data["full_path"] = selected_path
     data["append_slash"] = "~" if path else ""
-    data["localhost"] = socket.gethostbyname(socket.gethostname())
+    data["localhost"] = get_ip_address()
     data["port"] = port
 
     return data
@@ -155,7 +170,7 @@ if __name__ == "__main__":
     parser.add_argument("--port")
     parser.add_argument("--dot_files")
     args = parser.parse_args()
-    port = args.port if args.port else 5000
+    port = args.port if args.port else port
     dot_files = True if args.dot_files and args.dot_files != "0" else False
 
     app.run(host="0.0.0.0", port=port)
