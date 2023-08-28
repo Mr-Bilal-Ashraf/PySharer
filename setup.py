@@ -170,7 +170,7 @@ if __name__ == "__main__":
     parser.add_argument("--port")
     parser.add_argument("--dot_files")
     args = parser.parse_args()
-    port = args.port if args.port else 5000
+    port = args.port if args.port else port
     dot_files = True if args.dot_files and args.dot_files != "0" else False
 
     app.run(host="0.0.0.0", port=port)
