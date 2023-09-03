@@ -15,6 +15,8 @@ app.debug = True
 
 port = 5050
 dot_files = False
+download = True
+upload = True
 OS_SYSTEM = system().lower()
 
 
@@ -78,18 +80,21 @@ def get_ip_address():
 
 def get_windows_data(path, drive):
     data = dict()
+    data["download"] = download
+    data["upload"] = upload
     data["path"] = path
-    if path or drive:
-        path = path.replace("~", os.sep)
-        selected_path = f"{drive}:{os.sep}{path}{os.sep}"
+    if download:
+        if path or drive:
+            path = path.replace("~", os.sep)
+            selected_path = f"{drive}:{os.sep}{path}{os.sep}"
 
-        data.update(get_files(selected_path))
-        data["files"] = determine_file_types(data["files"], selected_path)
-        data["full_path"] = selected_path
-    else:
-        drives = os.popen("wmic logicaldisk get name").read()
-        drives = re.findall(r"([^\s]*:)", drives)
-        data["drives"] = list(map(lambda x: x[:-1], drives))
+            data.update(get_files(selected_path))
+            data["files"] = determine_file_types(data["files"], selected_path)
+            data["full_path"] = selected_path
+        else:
+            drives = os.popen("wmic logicaldisk get name").read()
+            drives = re.findall(r"([^\s]*:)", drives)
+            data["drives"] = list(map(lambda x: x[:-1], drives))
 
     data["prev_dir"] = True if path or drive else False
     data["append_slash"] = "~" if path else ""
@@ -101,19 +106,21 @@ def get_windows_data(path, drive):
 
 def get_linux_data(path, drive):
     data = dict()
+    data["download"] = download
+    data["upload"] = upload
     data["path"] = path
-    path = path.replace("~", "/")
-    if not path:
-        selected_path = f"{os.path.expanduser('~')}{os.sep}"
-    else:
-        selected_path = f"{os.path.expanduser('~')}{os.sep}{path}{os.sep}"
+    if download:
+        path = path.replace("~", "/")
+        if not path:
+            selected_path = f"{os.path.expanduser('~')}{os.sep}"
+        else:
+            selected_path = f"{os.path.expanduser('~')}{os.sep}{path}{os.sep}"
 
-    data.update(get_files(selected_path))
-    data["files"] = determine_file_types(data["files"], selected_path)
-    data["full_path"] = selected_path
+        data.update(get_files(selected_path))
+        data["files"] = determine_file_types(data["files"], selected_path)
+        data["full_path"] = selected_path
 
     data["prev_dir"] = True if path else False
-    data["full_path"] = selected_path
     data["append_slash"] = "~" if path else ""
     data["localhost"] = get_ip_address()
     data["port"] = port
@@ -169,8 +176,12 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--port")
     parser.add_argument("--dot_files")
+    parser.add_argument("--download")
+    parser.add_argument("--upload")
     args = parser.parse_args()
     port = args.port if args.port else port
     dot_files = True if args.dot_files and args.dot_files != "0" else False
+    download = False if args.download and args.download == "0" else True
+    upload = False if args.upload and args.upload == "0" else True
 
     app.run(host="0.0.0.0", port=port)
