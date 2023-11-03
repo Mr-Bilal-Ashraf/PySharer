@@ -41,39 +41,43 @@
 
 
 <div class="container">
-    <!-- Display all drives on the path -->
-    {% for obj in drives %}
-        <div class="directories" title="{{ obj }}">
-            <a href="/?drive={{ obj }}">
-                <img src="/static/img/drive.png" alt="{{ obj }}">
-            </a>
-            <a href="/?drive={{ obj }}">
-                {{ obj|truncate(20) }}
-            </a>
-        </div>
-    {% endfor %}
+    {% if download  %}
+        <!-- Display all drives on the path -->
+        {% for obj in drives %}
+            <div class="directories" title="{{ obj }}">
+                <a href="/?drive={{ obj }}">
+                    <img src="/static/img/drive.png" alt="{{ obj }}">
+                </a>
+                <a href="/?drive={{ obj }}">
+                    {{ obj|truncate(20) }}
+                </a>
+            </div>
+        {% endfor %}
 
-    <!-- Display all directories on the path -->
-    {% for obj in dirs %}
-        <div class="directories" title="{{ obj }}">
-            <a href="/{{ path }}{{ append_slash }}{{ obj }}?drive={{ drive }}">
-                <img src="/static/img/dir.png" alt="{{ obj }}">
-            </a>
-            <a href="/{{ path }}{{ append_slash }}{{ obj }}?drive={{ drive }}">
-                {{ obj|truncate(20) }}
-            </a>
-        </div>
-    {% endfor %}
+        <!-- Display all directories on the path -->
+        {% for obj in dirs %}
+            <div class="directories" title="{{ obj }}">
+                <a href="/{{ path }}{{ append_slash }}{{ obj }}?drive={{ drive }}">
+                    <img src="/static/img/dir.png" alt="{{ obj }}">
+                </a>
+                <a href="/{{ path }}{{ append_slash }}{{ obj }}?drive={{ drive }}">
+                    {{ obj|truncate(20) }}
+                </a>
+            </div>
+        {% endfor %}
 
-    <!-- Display all files on the path -->
-    {% for obj in files %}
-        <div onmouseover="show_file_size('{{ obj.name }}', '{{ obj.size }}')" onmouseleave="hide_file_size()">
-            <a href="/download/{{ path }}/{{ obj.name }}/?drive={{ drive }}" download>
-                <img src="/static/img/{{ obj.type }}.png" alt="{{ obj.name }}">
-            </a>
-            <a href="/download/{{ path }}/{{ obj.name }}/?drive={{ drive }}" download>{{ obj.name|truncate(20) }}</a>
-        </div>
-    {% endfor %}
+        <!-- Display all files on the path -->
+        {% for obj in files %}
+            <div onmouseover="show_file_size('{{ obj.name }}', '{{ obj.size }}')" onmouseleave="hide_file_size()">
+                <a href="/download/{{ path }}/{{ obj.name }}/?drive={{ drive }}" download>
+                    <img src="/static/img/{{ obj.type }}.png" alt="{{ obj.name }}">
+                </a>
+                <a href="/download/{{ path }}/{{ obj.name }}/?drive={{ drive }}" download>{{ obj.name|truncate(20) }}</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        File downloading is not allowed by the host machine.
+    {% endif %}
 
 </div>
 <div id="file_size_box">
@@ -91,36 +95,40 @@
         <button class="close-button" onclick="close_uploadPopup()">
             <span>&times;</span>
         </button>
-        <label for="file" id="upload-icon">
-            <img src="/static/img/upload.png" alt="upload icon">
-        </label>
-        <form action="/upload/" id="uploadForm" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" id="file" hidden>
-            <progress id="progressBar" value="0" max="100"></progress>
-            <div id="progressStatus"></div>
-            <button type="submit" id="submit" class="submitButton" style="display: none;">Upload</button>
-            <button type="button" id="cancel" class="submitButton" style="display: none;">Cancel</button>
-        </form>
-        <!-- <img src="./static/img/upload.png" alt=""> -->
+        {% if upload %}
+            <label for="file" id="upload-icon">
+                <img src="/static/img/upload.png" alt="upload icon">
+            </label>
+            <form action="/upload/" id="uploadForm" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" id="file" hidden>
+                <progress id="progressBar" value="0" max="100"></progress>
+                <div id="progressStatus"></div>
+                <button type="submit" id="submit" class="submitButton" style="display: none;">Upload</button>
+                <button type="button" id="cancel" class="submitButton" style="display: none;">Cancel</button>
+            </form>
+            <!-- <img src="./static/img/upload.png" alt=""> -->
 
-        <div id="wrapping-fileAndNote">
-            <div class="file-detail1">
-                <div class="option">
-                    <p>File Name : <b id="file-name">- - - - </b></p>
+            <div id="wrapping-fileAndNote">
+                <div class="file-detail1">
+                    <div class="option">
+                        <p>File Name : <b id="file-name">- - - - </b></p>
+                    </div>
+                    <div class="option">
+                        <p>File size : <b id="file-size">- - - - </b></p>
+                    </div>
+                    <div class="option">
+                        <p>File Type : <b id="file-type">- - - - </b></p>
+                    </div>
                 </div>
-                <div class="option">
-                    <p>File size : <b id="file-size">- - - - </b></p>
-                </div>
-                <div class="option">
-                    <p>File Type : <b id="file-type">- - - - </b></p>
+                <hr>
+                <div class="note">
+                    <p>
+                        All the uploaded files will be saved in <b>Downloads</b> Folder.
+                    </p>
                 </div>
             </div>
-            <hr>
-            <div class="note">
-                <p>
-                    All the uploaded files will be saved in <b>Downloads</b> Folder.
-                </p>
-            </div>
-        </div>
+        {% else %}
+            File uploading is not allowed by the host machine.
+        {% endif %}
     </div>
 </div>

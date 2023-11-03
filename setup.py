@@ -147,7 +147,7 @@ def download_file(path="", file=""):
     path = path.replace("~", os.sep)
     if OS_SYSTEM == "windows":
         path = f"{drive}:{os.sep}{path}{os.sep}"
-    elif OS_SYSTEM == "linux":
+    elif OS_SYSTEM == "linux" or OS_SYSTEM == 'darwin':
         path = f"{os.path.expanduser('~')}{os.sep}{path}{os.sep}"
     return send_from_directory(path, file, as_attachment=True)
 
