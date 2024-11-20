@@ -155,10 +155,12 @@ def download_file(path="", file=""):
 @app.route("/upload/", methods=["POST"])
 def upload_file():
     try:
-        f = request.files["file"]
-        file_name = secure_filename(f.filename)
-        path = f"{os.path.expanduser('~')}{os.sep}Downloads{os.sep}"
-        f.save(path + file_name)
+        files = request.files.getlist("file")
+        # f = request.files["file"]
+        for f in files:
+            file_name = secure_filename(f.filename)
+            path = f"{os.path.expanduser('~')}{os.sep}Downloads{os.sep}"
+            f.save(path + file_name)
         return jsonify(dict(message="success", code=True)), 201
     except Exception as e:
         return (
