@@ -118,9 +118,11 @@ form.addEventListener("submit", e => {
     cancelButton.style.display = "block";
     actualBtn.disabled = true;
 
-    const file = file_input.files[0];
     const form_data = new FormData();
-    form_data.append("file", file);
+    const files = file_input.files;
+    for (i = 0; i < files.length; i++ ) {
+        form_data.append("file", files[i]);
+    }
 
     xhr = new XMLHttpRequest();
     xhr.open('POST', '/upload/', true);
