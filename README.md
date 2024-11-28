@@ -1,11 +1,57 @@
 # ![logo](https://github.com/Mr-Bilal-Ashraf/PySharer/blob/master/static/img/short_logo.png) PySharer
 
-This is a flask app use to share files from your machine on the **LAN** (Local Area Network). Just clone the repo and
-run the setup.py file. It will show all your system files and folders on system **IPV4 Address**.
+**PySharer** is a powerful and easy-to-use Python package for sharing and transferring data seamlessly between devices using **LAN** (Local Area Network).
+
+## Installation Guide
+
+You have multiple options to install **PySharer** on your machine:
+
+### Option 1: Install via pip (Recommended)
+
+The simplest way to install **PySharer** is by using `pip`. Open your terminal or command prompt and run:
+
+```bash
+pip install pysharer
+```
+
+### Option 2: Install from Source by Cloning the Repository
+
+If you prefer to work with the source code or need to modify the package, you can clone the repository and install it locally.
+
+1. First, clone the repository:
+```bash
+git clone https://github.com/your-username/pysharer.git
+```
+
+2. Navigate to the project root directory and install the package using pip:
+```bash
+pip install .
+```
+
+### Option 3: Install from the Wheel Distribution
+There is also **wheel** file in dist directory, you can also install the package using this **.whl** file.
+
+1. Navigate to the dist/ directory where the .whl file is located:
+```bash
+cd dist
+```
+
+2. Install the .whl file with pip:
+```bash
+pip install PySharer-***.whl
+```
+This will install PySharer from the wheel file.
+
+## Run PySharer
+
+The package can be run from anywhere on the system. Just open terminal, type **pysharer** and hit enter...
+```bash
+pysharer
+```
+You can go to **localhost:5050** on your browser to see your files. Your **IPV4 address** is also shown there! Anyone from **LAN** can download and upload files using this **IPV4 address**.
+
 
 ![image](https://github.com/Mr-Bilal-Ashraf/PySharer/assets/92203535/fe57a018-1341-49e8-bd1c-5090211c0be7)
-
-You can go to **localhost:5050** on your browser to see your files. Your **IPV4 address** is also shown there!
 
 ## Dependencies
 
