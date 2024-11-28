@@ -154,13 +154,23 @@ def download_file(path="", file=""):
     path = path.replace("~", os.sep)
     if OS_SYSTEM == "windows":
         path = f"{drive}:{os.sep}{path}{os.sep}"
-    elif OS_SYSTEM == "linux" or OS_SYSTEM == 'darwin':
+    elif OS_SYSTEM == "linux" or OS_SYSTEM == "darwin":
         path = f"{os.path.expanduser('~')}{os.sep}{path}{os.sep}"
     return send_from_directory(path, file, as_attachment=True)
 
 
 @app.route("/upload/", methods=["POST"])
 def upload_file():
+    if not upload:
+        return (
+            jsonify(
+                dict(
+                    message="Uploading is disabled by the server admin!",
+                    code=False,
+                )
+            ),
+            405,
+        )
     try:
         files = request.files.getlist("file")
         # f = request.files["file"]
@@ -181,7 +191,8 @@ def upload_file():
         )
 
 
-if __name__ == "__main__":
+def start():
+    global port, dot_files, download, upload
     parser = ArgumentParser()
     parser.add_argument("--port")
     parser.add_argument("--dot_files")
@@ -194,3 +205,7 @@ if __name__ == "__main__":
     upload = False if args.upload and args.upload == "0" else True
 
     app.run(host="0.0.0.0", port=port)
+
+
+if __name__ == "__main__":
+    start()
