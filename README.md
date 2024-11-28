@@ -1,4 +1,4 @@
-# ![logo](https://github.com/Mr-Bilal-Ashraf/PySharer/blob/master/static/img/short_logo.png) PySharer
+# ![logo](https://github.com/Mr-Bilal-Ashraf/PySharer/blob/master/PySharer/static/img/short_logo.png) PySharer
 
 **PySharer** is a powerful and easy-to-use Python package for sharing and transferring data seamlessly between devices using **LAN** (Local Area Network).
 
@@ -20,7 +20,7 @@ If you prefer to work with the source code or need to modify the package, you ca
 
 1. First, clone the repository:
 ```bash
-git clone https://github.com/your-username/pysharer.git
+git clone https://github.com/Mr-Bilal-Ashraf/PySharer.git
 ```
 
 2. Navigate to the project root directory and install the package using pip:
