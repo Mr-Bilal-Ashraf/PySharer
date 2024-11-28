@@ -1,17 +1,24 @@
+from flask import Flask, jsonify, render_template, request, send_from_directory
+from werkzeug.utils import secure_filename
+from argparse import ArgumentParser
+
+from .FILE_TYPES import FILE_TYPES
+
+from platform import system
+
+import socket
 import math
 import os
 import re
-import socket
-from argparse import ArgumentParser
-from platform import system
 
-from flask import Flask, jsonify, render_template, request, send_from_directory
-from werkzeug.utils import secure_filename
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-from FILE_TYPES import FILE_TYPES
-
-app = Flask(__name__)
-app.debug = True
+app = Flask(
+    __name__,
+    template_folder=os.path.join(current_dir, "templates"),
+    static_folder=os.path.join(current_dir, "static"),
+)
+app.debug = False
 
 port = 5050
 dot_files = False
