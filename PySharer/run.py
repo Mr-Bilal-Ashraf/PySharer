@@ -3,6 +3,7 @@ from werkzeug.utils import secure_filename
 from argparse import ArgumentParser
 
 from .FILE_TYPES import FILE_TYPES
+from .version import __version__
 
 from platform import system
 
@@ -193,16 +194,42 @@ def upload_file():
 
 def start():
     global port, dot_files, download, upload
-    parser = ArgumentParser()
-    parser.add_argument("--port")
-    parser.add_argument("--dot_files")
-    parser.add_argument("--download")
-    parser.add_argument("--upload")
+    parser = ArgumentParser(
+        description="PySharer is a Flask-based web application for sharing files using LAN."
+    )
+    parser.add_argument("--version", action="version", version=f"PySharer {__version__}")
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=5050,
+        help="Port number to run the server on (default: 5050)",
+    )
+    parser.add_argument(
+        "--dot_files",
+        type=int,
+        choices=[0, 1],
+        default=0,
+        help="Specify whether to show hidden files/directories or not for download. Use 1 for True and 0 for False (default: 0)",
+    )
+    parser.add_argument(
+        "--download",
+        type=int,
+        choices=[0, 1],
+        default=1,
+        help="Enable or Disable file download. Use 1 for True and 0 for False (default: 1)",
+    )
+    parser.add_argument(
+        "--upload",
+        type=int,
+        choices=[0, 1],
+        default=1,
+        help="Enable or Disable file upload. Use 1 for True and 0 for False (default: 1)",
+    )
     args = parser.parse_args()
-    port = args.port if args.port else port
-    dot_files = True if args.dot_files and args.dot_files != "0" else False
-    download = False if args.download and args.download == "0" else True
-    upload = False if args.upload and args.upload == "0" else True
+    port = args.port
+    dot_files = bool(args.dot_files)
+    download = bool(args.download)
+    upload = bool(args.upload)
 
     app.run(host="0.0.0.0", port=port)
 
