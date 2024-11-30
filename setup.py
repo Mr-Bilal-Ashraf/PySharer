@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
+from PySharer import __version__
 
 setup(
     name="PySharer",
-    version="1.0.0",
-    description="A Flask-based web application for sharing files using LAN.",
+    version=__version__,
+    description="PySharer is a Flask-based web application for sharing files using LAN.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     author="Muhammad Bilal Azaad",
