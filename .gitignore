@@ -8,6 +8,7 @@
 /dataSources.local.xml
 .idea/*
 venv
+test
 __pycache__/
 build/
 PySharer.egg-info/
