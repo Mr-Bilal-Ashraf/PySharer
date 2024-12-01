@@ -141,7 +141,7 @@ def get_windows_data(path: str, drive: str):
     data["localhost"] = get_ip_address()
     data["port"] = port
     data["drive"] = drive
-    data["dirs"].sort()
+    data["dirs"].sort(key=str.lower)
     data["files"] = sorted(data["files"], key=lambda x: x["name"].lower())
 
     return data
@@ -174,7 +174,7 @@ def get_linux_data(path: str, drive: str):
     data["append_slash"] = "~" if path else ""
     data["localhost"] = get_ip_address()
     data["port"] = port
-    data["dirs"].sort()
+    data["dirs"].sort(key=str.lower)
     data["files"] = sorted(data["files"], key=lambda x: x["name"].lower())
 
     return data
