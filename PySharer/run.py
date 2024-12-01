@@ -98,7 +98,6 @@ def get_ip_address():
     """
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
     try:
         # use network to detect perfect IPV4 address
         s.connect(("8.8.8.8", 80))
@@ -127,10 +126,10 @@ def get_windows_data(path: str, drive: str):
     if download:
         if path or drive:
             path = path.replace("~", os.sep)
-            selected_path = f"{drive}:{os.sep}{path}{os.sep}"
+            selected_path = Path().home() / path
 
             data.update(get_files(selected_path))
-            data["files"] = determine_file_types(data["files"], selected_path)
+            data["files"] = determine_file_types(data["files"])
             data["full_path"] = selected_path
         else:
             drives = os.popen("wmic logicaldisk get name").read()
@@ -142,6 +141,9 @@ def get_windows_data(path: str, drive: str):
     data["localhost"] = get_ip_address()
     data["port"] = port
     data["drive"] = drive
+    data["dirs"].sort()
+    data["files"] = sorted(data["files"], key=lambda x: x["name"].lower())
+
     return data
 
 
@@ -160,19 +162,20 @@ def get_linux_data(path: str, drive: str):
     data["path"] = path
     if download:
         path = path.replace("~", "/")
-        if not path:
-            selected_path = f"{os.path.expanduser('~')}{os.sep}"
-        else:
-            selected_path = f"{os.path.expanduser('~')}{os.sep}{path}{os.sep}"
+        selected_path = Path().home()
+        if path:
+            selected_path = selected_path / path
 
         data.update(get_files(selected_path))
-        data["files"] = determine_file_types(data["files"], selected_path)
+        data["files"] = determine_file_types(data["files"])
         data["full_path"] = selected_path
 
     data["prev_dir"] = True if path else False
     data["append_slash"] = "~" if path else ""
     data["localhost"] = get_ip_address()
     data["port"] = port
+    data["dirs"].sort()
+    data["files"] = sorted(data["files"], key=lambda x: x["name"].lower())
 
     return data
 
