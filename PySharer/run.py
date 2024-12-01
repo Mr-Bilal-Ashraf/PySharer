@@ -44,7 +44,7 @@ def get_file_size(file: Path):
         size /= 1024
 
 
-def get_files(path: str):
+def get_files(path: Path):
     """
     This function is used to get files & directories from the specified path.
 
@@ -52,23 +52,18 @@ def get_files(path: str):
     :return: It is returning the data that is being accessed.
     """
 
-    path = path.replace("\\", "/")
-    data = dict()
-    data["dirs"] = list()
-    data["files"] = list()
-    list_dot_files = "" if dot_files else " and not f.startswith('.')"
-    files = os.listdir(path)
+    data = dict(
+        dirs=list(),
+        files=list(),
+    )
+    list_dot_files = "" if dot_files else " and not f.name.startswith('.')"
+    for f in path.iterdir():
+        if eval(f"f.is_dir(){list_dot_files}"):
+            data["dirs"].append(f.name)
 
-    for f in files:
-        if eval(f"os.path.isdir(path+f){list_dot_files}"):
-            data["dirs"].append(f)
-
-    for f in files:
-        if eval(f"os.path.isfile(path+f){list_dot_files}"):
+        if eval(f"f.is_file(){list_dot_files}"):
             data["files"].append(f)
 
-    data["dirs"].sort()
-    data["files"].sort()
     return data
 
 
