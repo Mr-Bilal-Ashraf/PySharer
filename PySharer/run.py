@@ -28,7 +28,14 @@ upload = True
 OS_SYSTEM = system().lower()
 
 
-def get_file_size(file):
+def get_file_size(file: str):
+    """
+    This function is used to get the size of the file in human readable format.
+
+    :param file: It is the path to the file that is being accessed.
+    :return: It is returning the size of the file in human readable format.
+    """
+
     sizes = ["Bytes", "KB", "MB", "GB", "TB"]
     size = os.path.getsize(file)
     if size == 0:
@@ -37,7 +44,15 @@ def get_file_size(file):
     return str(round(size / math.pow(1024, i), 2)) + " " + sizes[i]
 
 
-def get_files(path):
+def get_files(path: str):
+    """
+    This function is used to get files & directories from the specified path.
+
+    :param path: It is the path to the directory that is being accessed.
+    :return: It is returning the data that is being accessed.
+    """
+
+    path = path.replace("\\", "/")
     data = dict()
     data["dirs"] = list()
     data["files"] = list()
@@ -57,7 +72,15 @@ def get_files(path):
     return data
 
 
-def determine_file_types(files, path):
+def determine_file_types(files: list, path: str):
+    """
+    This function is used to determine the file type of the files in the specified path.
+
+    :param files: It is the list of files that is being accessed.
+    :param path: It is the path to the directory that is being accessed.
+    :return: It is returning the data that is being accessed.
+    """
+
     data = list()
     for file in files:
         size = get_file_size(path + file)
@@ -72,6 +95,13 @@ def determine_file_types(files, path):
 
 
 def get_ip_address():
+    """
+    This function is used to detect the IPV4 address of the machine. On macOS, it first connects to socket to
+    get the IPV4 address, as macOS sometimes returns localhost instead of IPV4 address.
+    This IPV4 address is used to show on the homepage.
+    :return: IP address of the machine
+    """
+
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     try:
@@ -86,7 +116,15 @@ def get_ip_address():
     return ip
 
 
-def get_windows_data(path, drive):
+def get_windows_data(path: str, drive: str):
+    """
+    This function is used to get files & directories from the specified path on Windows.
+
+    :param path: It is the path to the directory that is being accessed.
+    :param drive: It is the drive that is being accessed.
+    :return: It is returning the data that is being accessed.
+    """
+
     data = dict()
     data["download"] = download
     data["upload"] = upload
@@ -112,7 +150,15 @@ def get_windows_data(path, drive):
     return data
 
 
-def get_linux_data(path, drive):
+def get_linux_data(path: str, drive: str):
+    """
+    This function is used to get files & directories from the specified path on linux.
+
+    :param path: It is the path to the directory that is being accessed.
+    :param drive: This parameter is not in use in this function because linux have no drives.
+    :return: It is returning the data that is being accessed.
+    """
+
     data = dict()
     data["download"] = download
     data["upload"] = upload
@@ -136,13 +182,29 @@ def get_linux_data(path, drive):
     return data
 
 
-def get_darwin_data(path, drive):
+def get_darwin_data(path: str, drive: str):
+    """
+    This function is used to get files & directories from the specified path on macOS.
+
+    :param path: It is the path to the directory that is being accessed.
+    :param drive: It is the drive that is being accessed.
+    :return: It is returning the data that is being accessed.
+    """
+
     return get_linux_data(path, drive)
 
 
 @app.route("/")
 @app.route("/<path>/")
-def main(path=""):
+def main(path: str = ""):
+    """
+    This is the main API of the app. It is used to get the files & directories from the specified path to showcase
+    them using the template. So user can explore and download the required file.
+
+    :param path: It is the path to the directory that is being accessed.
+    :return: It is returning the index.html template with the data that is being accessed.
+    """
+
     drive = request.args.get("drive", "")
     data = eval(f"get_{OS_SYSTEM}_data")(path, drive)
     return render_template("index.html", **data)
@@ -150,7 +212,15 @@ def main(path=""):
 
 @app.route("/download/<file>/")
 @app.route("/download/<path>/<file>/")
-def download_file(path="", file=""):
+def download_file(path: str = "", file: str = ""):
+    """
+    This API is used to download files from the system who is running this app.
+
+    :param path: It is the path to the file that is being downloaded.
+    :param file: It is the name of the file that is being downloaded.
+    :return: It is returning the file that is being downloaded.
+    """
+
     drive = request.args.get("drive", "")
     path = path.replace("~", os.sep)
     if OS_SYSTEM == "windows":
@@ -162,6 +232,16 @@ def download_file(path="", file=""):
 
 @app.route("/upload/", methods=["POST"])
 def upload_file():
+    """
+    This API is used to upload files to the Downloads folder of the system who is running this app.
+    It can accept multiple files at once.
+
+    It is returning a JSON response with the following keys:
+    - message: A string message indicating the status of the upload operation.
+    - code: A boolean value indicating whether the upload was successful or not.
+    - Note: At the moment, we are not handling these JSON responses in the frontend.
+    """
+
     if not upload:
         return (
             jsonify(
@@ -193,11 +273,18 @@ def upload_file():
 
 
 def start():
+    """
+    Start the PySharer server with the specified arguments from the terminal.
+    """
+
+    global app
     global port, dot_files, download, upload
     parser = ArgumentParser(
         description="PySharer is a Flask-based web application for sharing files using LAN."
     )
-    parser.add_argument("--version", action="version", version=f"PySharer {__version__}")
+    parser.add_argument(
+        "--version", action="version", version=f"PySharer {__version__}"
+    )
     parser.add_argument(
         "--port",
         type=int,
