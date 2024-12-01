@@ -67,22 +67,22 @@ def get_files(path: Path):
     return data
 
 
-def determine_file_types(files: list, path: str):
+def determine_file_types(files: list):
     """
     This function is used to determine the file type of the files in the specified path.
 
     :param files: It is the list of files that is being accessed.
-    :param path: It is the path to the directory that is being accessed.
     :return: It is returning the data that is being accessed.
     """
 
     data = list()
     for file in files:
-        size = get_file_size(path + file)
+        size = get_file_size(file)
+        ext = file.suffix[1:].lower()
         data.append(
             dict(
-                name=file,
-                type=FILE_TYPES.get(file[file.rfind(".") + 1 :].lower(), "unknown"),
+                name=file.name,
+                type=FILE_TYPES.get(ext, "unknown"),
                 size=size,
             )
         )
