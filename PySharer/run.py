@@ -6,9 +6,9 @@ from .FILE_TYPES import FILE_TYPES
 from .version import __version__
 
 from platform import system
+from pathlib import Path
 
 import socket
-import math
 import os
 import re
 
@@ -28,7 +28,7 @@ upload = True
 OS_SYSTEM = system().lower()
 
 
-def get_file_size(file: str):
+def get_file_size(file: Path):
     """
     This function is used to get the size of the file in human readable format.
 
@@ -37,11 +37,11 @@ def get_file_size(file: str):
     """
 
     sizes = ["Bytes", "KB", "MB", "GB", "TB"]
-    size = os.path.getsize(file)
-    if size == 0:
-        return "0 Byte"
-    i = int(math.floor(math.log(size) / math.log(1024)))
-    return str(round(size / math.pow(1024, i), 2)) + " " + sizes[i]
+    size = file.stat().st_size
+    for unit in sizes:
+        if size < 1024:
+            return str(round(size, 2)) + " " + unit
+        size /= 1024
 
 
 def get_files(path: str):
