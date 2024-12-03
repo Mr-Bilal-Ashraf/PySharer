@@ -131,6 +131,8 @@ def get_windows_data(path: str, drive: str):
             data.update(get_files(selected_path))
             data["files"] = determine_file_types(data["files"])
             data["full_path"] = selected_path
+            data["dirs"].sort(key=str.lower)
+            data["files"] = sorted(data["files"], key=lambda x: x["name"].lower())
         else:
             drives = os.popen("wmic logicaldisk get name").read()
             drives = re.findall(r"([^\s]*:)", drives)
@@ -141,8 +143,6 @@ def get_windows_data(path: str, drive: str):
     data["localhost"] = get_ip_address()
     data["port"] = port
     data["drive"] = drive
-    data["dirs"].sort(key=str.lower)
-    data["files"] = sorted(data["files"], key=lambda x: x["name"].lower())
 
     return data
 
@@ -169,13 +169,13 @@ def get_linux_data(path: str, drive: str):
         data.update(get_files(selected_path))
         data["files"] = determine_file_types(data["files"])
         data["full_path"] = selected_path
+        data["files"] = sorted(data["files"], key=lambda x: x["name"].lower())
+        data["dirs"].sort(key=str.lower)
 
     data["prev_dir"] = True if path else False
     data["append_slash"] = "~" if path else ""
     data["localhost"] = get_ip_address()
     data["port"] = port
-    data["dirs"].sort(key=str.lower)
-    data["files"] = sorted(data["files"], key=lambda x: x["name"].lower())
 
     return data
 
