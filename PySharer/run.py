@@ -126,7 +126,7 @@ def get_windows_data(path: str, drive: str):
     if download:
         if path or drive:
             path = path.replace("~", os.sep)
-            selected_path = Path().home() / path
+            selected_path = Path(f"{drive}:/") / path
 
             data.update(get_files(selected_path))
             data["files"] = determine_file_types(data["files"])
