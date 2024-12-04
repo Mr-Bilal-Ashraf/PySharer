@@ -1,134 +1,162 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="/static/img/short_logo.png"/>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="icon" href="/static/img/short_logo.png" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script src="/static/javascript/qrcode.min.js"></script>
     <title>Py-Sharer</title>
+  </head>
 
-</head>
-
-<body>
-
-<div class="header" id="header">
-    {% if prev_dir %}
-        <a class="back_link" onclick="window.history.back()">
-            <div class="left">
-                Back
-            </div>
-        </a>
-    {% endif %}
-    <div class="center desktop">Live on Local Network
+  <body>
+    <div class="header" id="header">
+      {% if prev_dir %}
+      <a class="back_link" onclick="window.history.back()">
+        <div class="left">Back</div>
+      </a>
+      {% endif %}
+      <div class="center desktop">
+        Live on Local Network
         <something class="url">{{ localhost }}:{{ port }}</something>
-    </div>
-    <div class="center phone">
+        <img
+          src="/static/img/qrCode.png"
+          alt="QR code icon"
+          id="qr-icon-desktop"
+          onclick="showQRCode(`{{ localhost }}:{{ port }}`)"
+        />
+      </div>
+      <div class="center phone">
+        <img
+          src="/static/img/qrCode.png"
+          alt="QR code icon"
+          id="qr-icon-mobile"
+          onclick="showQRCode(`{{ localhost }}:{{ port }}`)"
+        />
         <something class="url">{{ localhost }}:{{ port }}</something>
-    </div>
-    <div class="right">
+      </div>
+      <div class="right">
         <button class="button" onclick="show_uploadPopup()">Upload</button>
         <button class="button" onclick="window.open('https://github.com/Mr-Bilal-Ashraf/PySharer', '_blank')">
-            Github
+          Github
         </button>
+      </div>
     </div>
 
-</div>
+    <div class="container">
+      {% if download %}
+      <!-- Display all drives on the path -->
+      {% for obj in drives %}
+      <div class="directories" title="{{ obj }}">
+        <a href="/?drive={{ obj }}">
+          <img src="/static/img/drive.png" alt="{{ obj }}" />
+        </a>
+        <a href="/?drive={{ obj }}"> {{ obj|truncate(20) }} </a>
+      </div>
+      {% endfor %}
 
+      <!-- Display all directories on the path -->
+      {% for obj in dirs %}
+      <div class="directories" title="{{ obj }}">
+        <a href="/{{ path }}{{ append_slash }}{{ obj }}?drive={{ drive }}">
+          <img src="/static/img/dir.png" alt="{{ obj }}" />
+        </a>
+        <a href="/{{ path }}{{ append_slash }}{{ obj }}?drive={{ drive }}"> {{ obj|truncate(20) }} </a>
+      </div>
+      {% endfor %}
 
-<div class="container">
-    {% if download  %}
-        <!-- Display all drives on the path -->
-        {% for obj in drives %}
-            <div class="directories" title="{{ obj }}">
-                <a href="/?drive={{ obj }}">
-                    <img src="/static/img/drive.png" alt="{{ obj }}">
-                </a>
-                <a href="/?drive={{ obj }}">
-                    {{ obj|truncate(20) }}
-                </a>
-            </div>
-        {% endfor %}
+      <!-- Display all files on the path -->
+      {% for obj in files %}
+      <div onmouseover="show_file_size('{{ obj.name }}', '{{ obj.size }}')" onmouseleave="hide_file_size()">
+        <a href="/download/{{ path }}/{{ obj.name }}/?drive={{ drive }}" download>
+          <img src="/static/img/{{ obj.type }}.png" alt="{{ obj.name }}" />
+        </a>
+        <a href="/download/{{ path }}/{{ obj.name }}/?drive={{ drive }}" download>{{ obj.name|truncate(20) }}</a>
+      </div>
+      {% endfor %} {% else %} File downloading is not allowed by the host machine. {% endif %}
+    </div>
+    <div id="file_size_box">
+      <div id="file_name"></div>
+      <div id="file_size"></div>
+    </div>
+    <!-- Model for showing QR code -->
+    <div id="model-container">
+      <div class="model">
+        <div class="model-content">
+          <p class="close-button" onclick="hideQRCode()">X</p>
+          <div class="model-details">
+            <b>Details</b>
 
-        <!-- Display all directories on the path -->
-        {% for obj in dirs %}
-            <div class="directories" title="{{ obj }}">
-                <a href="/{{ path }}{{ append_slash }}{{ obj }}?drive={{ drive }}">
-                    <img src="/static/img/dir.png" alt="{{ obj }}">
-                </a>
-                <a href="/{{ path }}{{ append_slash }}{{ obj }}?drive={{ drive }}">
-                    {{ obj|truncate(20) }}
-                </a>
-            </div>
-        {% endfor %}
+            <table>
+              <tr>
+                <td class="detail-heading">Connected WIFI</td>
+                <td>{{ssid}}</td>
+              </tr>
+              <tr>
+                <td class="detail-heading">IP-Address</td>
+                <td>{{localhost}}</td>
+              </tr>
+              <tr>
+                <td class="detail-heading">Port</td>
+                <td>{{port}}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="model-qr">
+            Scan the QR code to open in Phone
+            <div id="qr-code-container"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 
-        <!-- Display all files on the path -->
-        {% for obj in files %}
-            <div onmouseover="show_file_size('{{ obj.name }}', '{{ obj.size }}')" onmouseleave="hide_file_size()">
-                <a href="/download/{{ path }}/{{ obj.name }}/?drive={{ drive }}" download>
-                    <img src="/static/img/{{ obj.type }}.png" alt="{{ obj.name }}">
-                </a>
-                <a href="/download/{{ path }}/{{ obj.name }}/?drive={{ drive }}" download>{{ obj.name|truncate(20) }}</a>
-            </div>
-        {% endfor %}
-    {% else %}
-        File downloading is not allowed by the host machine.
-    {% endif %}
-
-</div>
-<div id="file_size_box">
-    <div id="file_name"></div>
-    <div id="file_size"></div>
-</div>
-</body>
-
-<script defer src="{{ url_for('static', filename = 'javascript/app.js') }}"></script>
-
+  <script defer src="{{ url_for('static', filename = 'javascript/app.js') }}"></script>
 </html>
 
 <div id="uploadContainer1">
-    <div class="innerContainer">
-        <button class="close-button" onclick="close_uploadPopup()">
-            <span>&times;</span>
-        </button>
-        {% if upload %}
-            <label for="file" id="upload-icon">
-                <img src="/static/img/upload.png" alt="upload icon">
-            </label>
-            <form action="/upload/" id="uploadForm" method="post" enctype="multipart/form-data">
-                <input type="file" name="file" id="file" multiple hidden>
-                <progress id="progressBar" value="0" max="100"></progress>
-                <div id="progressStatus"></div>
-                <button type="submit" id="submit" class="submitButton" style="display: none;">Upload</button>
-                <button type="button" id="cancel" class="submitButton" style="display: none;">Cancel</button>
-            </form>
-            <!-- <img src="./static/img/upload.png" alt=""> -->
+  <div class="innerContainer">
+    <button class="close-button" onclick="close_uploadPopup()">
+      <span>&times;</span>
+    </button>
+    {% if upload %}
+    <label for="file" id="upload-icon">
+      <img src="/static/img/upload.png" alt="upload icon" />
+    </label>
+    <form action="/upload/" id="uploadForm" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" id="file" multiple hidden />
+      <progress id="progressBar" value="0" max="100"></progress>
+      <div id="progressStatus"></div>
+      <button type="submit" id="submit" class="submitButton" style="display: none">Upload</button>
+      <button type="button" id="cancel" class="submitButton" style="display: none">Cancel</button>
+    </form>
+    <!-- <img src="./static/img/upload.png" alt=""> -->
 
-            <div id="wrapping-fileAndNote">
-                <div class="file-detail1">
-                    <div class="option">
-                        <p>File Name : <b id="file-name">- - - - </b></p>
-                    </div>
-                    <div class="option">
-                        <p>File size : <b id="file-size">- - - - </b></p>
-                    </div>
-                    <div class="option">
-                        <p>File Type : <b id="file-type">- - - - </b></p>
-                    </div>
-                </div>
-                <hr>
-                <div class="note">
-                    <p>
-                        All the uploaded files will be saved in <b>Downloads</b> Folder.
-                    </p>
-                </div>
-            </div>
-        {% else %}
-            File uploading is not allowed by the host machine.
-        {% endif %}
+    <div id="wrapping-fileAndNote">
+      <div class="file-detail1">
+        <div class="option">
+          <p>File Name : <b id="file-name">- - - - </b></p>
+        </div>
+        <div class="option">
+          <p>File size : <b id="file-size">- - - - </b></p>
+        </div>
+        <div class="option">
+          <p>File Type : <b id="file-type">- - - - </b></p>
+        </div>
+      </div>
+      <hr />
+      <div class="note">
+        <p>All the uploaded files will be saved in <b>Downloads</b> Folder.</p>
+      </div>
     </div>
+    {% else %} File uploading is not allowed by the host machine. {% endif %}
+  </div>
 </div>
