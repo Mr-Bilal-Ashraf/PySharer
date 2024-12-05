@@ -3,8 +3,8 @@ from flask import Flask, jsonify, render_template, request, send_from_directory
 from werkzeug.utils import secure_filename
 from argparse import ArgumentParser
 
-from FILE_TYPES import FILE_TYPES
-from version import __version__
+from .FILE_TYPES import FILE_TYPES
+from .version import __version__
 
 from platform import system
 from pathlib import Path
