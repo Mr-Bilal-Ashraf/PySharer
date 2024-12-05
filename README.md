@@ -50,8 +50,14 @@ pysharer
 ```
 You can go to **localhost:5050** on your browser to see your files. Your **IPV4 address** is also shown there! Anyone from **LAN** can download and upload files using this **IPV4 address**.
 
+![image](https://github.com/user-attachments/assets/f752cbde-cb69-4868-9650-3aa7f43e663e)
 
-![image](https://github.com/Mr-Bilal-Ashraf/PySharer/assets/92203535/fe57a018-1341-49e8-bd1c-5090211c0be7)
+You can click on QR code, and scan the QR code from any mobile to get access.
+
+![image](https://github.com/user-attachments/assets/0b8c3424-3428-47a7-bebd-2ca0427b8cfa)
+
+![image](https://github.com/user-attachments/assets/0f13a2b4-a0c0-4292-8114-eaa2b5880aa7)
+
 
 ## Upload File
 
