@@ -1,9 +1,10 @@
+import subprocess
 from flask import Flask, jsonify, render_template, request, send_from_directory
 from werkzeug.utils import secure_filename
 from argparse import ArgumentParser
 
-from .FILE_TYPES import FILE_TYPES
-from .version import __version__
+from FILE_TYPES import FILE_TYPES
+from version import __version__
 
 from platform import system
 from pathlib import Path
@@ -109,6 +110,34 @@ def get_ip_address():
         s.close()
     return ip
 
+def get_ssid():
+    try:
+        if OS_SYSTEM == "windows":
+            result = subprocess.check_output(
+                "netsh wlan show interfaces", shell=True, text=True
+            )
+            match = re.search(r"SSID\s*:\s*(.+)", result)
+            return match.group(1) if match else "Unknown SSID"
+        elif OS_SYSTEM == "linux":
+            result = subprocess.check_output(
+                "nmcli -t -f active,ssid dev wifi", shell=True, text=True
+            )
+            for line in result.strip().split("\n"):
+                if line.startswith("yes:"):
+                    return line.split(":")[1]
+            return "Unknown SSID"
+        elif OS_SYSTEM == "darwin":
+            result = subprocess.check_output(
+                "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I",
+                shell=True,
+                text=True,
+            )
+            match = re.search(r"SSID: (.+)", result)
+            return match.group(1) if match else "Unknown SSID"
+    except Exception as e:
+        return "Unknown SSID"
+
+
 
 def get_windows_data(path: str, drive: str):
     """
@@ -123,6 +152,7 @@ def get_windows_data(path: str, drive: str):
     data["download"] = download
     data["upload"] = upload
     data["path"] = path
+    data["ssid"] = get_ssid()
     if download:
         if path or drive:
             path = path.replace("~", os.sep)
@@ -160,6 +190,7 @@ def get_linux_data(path: str, drive: str):
     data["download"] = download
     data["upload"] = upload
     data["path"] = path
+    data["ssid"] = get_ssid()
     if download:
         path = path.replace("~", "/")
         selected_path = Path().home()

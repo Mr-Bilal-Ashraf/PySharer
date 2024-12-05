@@ -148,3 +148,26 @@ cancelButton.addEventListener("click", e => {
     fileType.textContent = "- - - - ";
     fileSize.textContent = "- - - - ";
 })
+
+function generateQRCode(ipAddress) {
+  const container = document.getElementById("qr-code-container");
+  container.style.display = "block";
+  container.innerHTML = ""; // Clear any existing QR code
+  const qrCode = new QRCode(container, {
+    text: `http://${ipAddress}`,
+    width: 150,
+    height: 150,
+  });
+}
+
+function showQRCode(ipAddress) {
+  generateQRCode(ipAddress);
+  const container = document.getElementById("model-container");
+  container.style.visibility = "visible";
+  container.style.opacity = "1";
+}
+function hideQRCode() {
+  const container = document.getElementById("model-container");
+  container.style.visibility = "hidden";
+  container.style.opacity = "0";
+}
