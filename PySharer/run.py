@@ -58,12 +58,15 @@ def get_files(path: Path):
         files=list(),
     )
     list_dot_files = "" if dot_files else " and not f.name.startswith('.')"
-    for f in path.iterdir():
-        if eval(f"f.is_dir(){list_dot_files}"):
-            data["dirs"].append(f.name)
+    try:
+        for f in path.iterdir():
+            if eval(f"f.is_dir(){list_dot_files}"):
+                data["dirs"].append(f.name)
 
-        if eval(f"f.is_file(){list_dot_files}"):
-            data["files"].append(f)
+            if eval(f"f.is_file(){list_dot_files}"):
+                data["files"].append(f)
+    except:
+        pass
 
     return data
 
@@ -110,6 +113,7 @@ def get_ip_address():
         s.close()
     return ip
 
+
 def get_ssid():
     try:
         if OS_SYSTEM == "windows":
@@ -136,7 +140,6 @@ def get_ssid():
             return match.group(1) if match else "Unknown SSID"
     except Exception as e:
         return "Unknown SSID"
-
 
 
 def get_windows_data(path: str, drive: str):
