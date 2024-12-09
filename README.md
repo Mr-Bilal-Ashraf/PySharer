@@ -106,6 +106,23 @@ You can also use following flags while running the app.
 
 `pysharer --port 8080 --dot_files 2 --upload 0`
 
+## FireWall Issue
+
+If you are failing to access the site on machines using LAN, it may be due to your machine's **firewall** settings. You need
+to allow specified port (default 5050) in your firewall settings.
+
+### Windows
+
+https://ec.europa.eu/digital-building-blocks/sites/display/CEKB/How+to+open+a+port+on+the+firewall
+
+### Ubuntu / Linux
+
+https://ec.europa.eu/digital-building-blocks/sites/display/CEKB/How+to+open+a+port+on+the+firewall
+
+### MacOS
+
+https://www.macworld.com/article/671729/mac-firewall-how-to-open-specific-ports-in-os-x-10-10-firewall.html
+
 ## Dependencies
 
 * `Python 3`
